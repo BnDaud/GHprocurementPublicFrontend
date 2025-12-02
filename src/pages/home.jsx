@@ -5,7 +5,7 @@ import { FaArrowRight } from "react-icons/fa";
 function Home() {
   const { scrollToSection } = useContext(globalContext);
   return (
-    <div className="md:relative static bg-bgcolor/70 px-6 md:px-20 py-20 space-y-4">
+    <div className="md:relative static  px-6 md:px-20 py-20 space-y-4">
       <p className="text-3xl font-bold md:w-1/2">
         {" "}
         Procurement made simple sourcing, contracts, logistics.
@@ -51,7 +51,10 @@ function Home() {
             {" "}
             Manufacturing · Retail · Healthcare
           </p>
-          <div className="absolute flex gap-2 h-3 items-center top-3 right-0 text-purple font-bold cursor-pointer">
+          <div
+            className="absolute flex gap-2 h-3 items-center top-3 right-0 text-purple font-bold cursor-pointer"
+            onClick={() => scrollToSection(6)}
+          >
             <p>Get started</p> <FaArrowRight />
           </div>
         </div>

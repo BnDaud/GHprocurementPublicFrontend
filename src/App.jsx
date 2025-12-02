@@ -47,12 +47,12 @@ function App() {
           {" "}
           <Navbar scrollToSection={scrollToSection} />
         </div>
-        <main className="pt-15" onClick={() => setDropDown(false)}>
+        <main className="pt-15 bg-light/70" onClick={() => setDropDown(false)}>
           <section ref={home} className="  scroll-mt-15">
             {" "}
             <Home />{" "}
           </section>{" "}
-          <section ref={services} className="h-screen bg-black scroll-mt-15">
+          <section ref={services} className="scroll-mt-15">
             {" "}
             <Services />{" "}
           </section>
