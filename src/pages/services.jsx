@@ -30,7 +30,7 @@ function Services() {
   ]);
 
   return (
-    <div className="md:relative static 0 px-6 md:px-20 pb-20 space-y-4">
+    <div className=" px-6 md:px-20 pb-20 space-y-4">
       <p className="text-lg font-bold">Services</p>
       <div className="md:flex flex-wrap gap-4 justify-center md:space-y-0 space-y-4">
         {services.map((service) => (

@@ -60,7 +60,7 @@ function App() {
             {" "}
             <Portfolio />{" "}
           </section>
-          <section ref={blog} className="h-screen bg-black scroll-mt-15">
+          <section ref={blog} className=" scroll-mt-15">
             <Blog />
           </section>
           <section ref={contact} className="h-screen bg-white scroll-mt-15">
