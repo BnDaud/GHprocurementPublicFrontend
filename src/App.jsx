@@ -63,14 +63,17 @@ function App() {
           <section ref={blog} className=" scroll-mt-15">
             <Blog />
           </section>
-          <section ref={contact} className="h-screen bg-white scroll-mt-15">
+          <div className=" md:flex">
             {" "}
-            <Contact />
-          </section>
-          <section ref={rfq} className="h-screen bg-black scroll-mt-15">
-            {" "}
-            <RequestQoute />
-          </section>
+            <section ref={contact} className="w-2/3 scroll-mt-15">
+              {" "}
+              <Contact />
+            </section>
+            <section ref={rfq} className="scroll-mt-15">
+              {" "}
+              <RequestQoute />
+            </section>
+          </div>
         </main>
       </globalContext.Provider>
     </>
