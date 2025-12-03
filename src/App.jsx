@@ -65,11 +65,11 @@ function App() {
           </section>
           <div className=" md:flex md:px-20">
             {" "}
-            <section ref={contact} className="md:w-3/5 scroll-mt-15">
+            <section ref={contact} className="md:w-7/12 scroll-mt-15">
               {" "}
               <Contact />
             </section>
-            <section ref={rfq} className="md:w-2/5 scroll-mt-15">
+            <section ref={rfq} className="md:w-5/12 scroll-mt-15">
               {" "}
               <RequestQoute />
             </section>

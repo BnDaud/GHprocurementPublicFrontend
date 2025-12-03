@@ -79,6 +79,10 @@ function RequestQuote() {
               Reset
             </div>{" "}
           </div>
+          <p className="mt-5 text-sm font-bold text-center text-gray">
+            {" "}
+            We will follow up within 48 hours{" "}
+          </p>
         </form>
       </div>
     </div>

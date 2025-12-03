@@ -27,7 +27,7 @@ function Contact() {
   };
 
   return (
-    <div className="w-full min-h-100  px-6 pb-20 space-y-4">
+    <div className="w-full min-h-100  px-6 md:px-0 pb-20 space-y-4">
       <p className="text-xl font-bold"> Contact & Request For Quote (RFQ)</p>
       <div className="w-full min-h-85 p-4 bg-white rounded-2xl">
         <p className="text-xl font-bold">Contact Us</p>
