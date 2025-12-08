@@ -1,20 +1,14 @@
 import React, { useContext } from "react";
 import { globalContext } from "../App";
 import { FaArrowRight } from "react-icons/fa";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 function Home() {
-  const { scrollToSection } = useContext(globalContext);
+  const { scrollToSection, metadata } = useContext(globalContext);
   return (
     <div className="md:relative static  px-6 md:px-20 py-20 space-y-4">
-      <p className="text-3xl font-bold md:w-1/2">
-        {" "}
-        Procurement made simple sourcing, contracts, logistics.
-      </p>
-      <p className="md:w-3/5">
-        We source quality suppliers, negotiate contracts, and coordinate
-        logistics so your team can focus on what matters. Trusted by procurement
-        teams worldwide.
-      </p>
+      <p className="text-3xl font-bold md:w-1/2"> {metadata?.metaIntro}</p>
+      <p className="md:w-3/5">{metadata?.metaDescription}</p>
       {/* the 6 pass to the function below is id
       to understand it better study how the useRef hook is used and how the id are assigned both in the nav.jsx(navContent object) and App.jsx(section object) */}
       <div className="flex gap-4">
@@ -62,17 +56,37 @@ function Home() {
           {" "}
           <div className="text-center space-y-0">
             {" "}
-            <p className="font-bold text-xl text-purple"> 1250+</p>{" "}
+            <p className="font-bold text-xl text-purple">
+              {metadata ? (
+                metadata?.ordersCompleted + "+"
+              ) : (
+                <AiOutlineLoading3Quarters className="text-center w-full animate-spin" />
+              )}
+            </p>{" "}
             <p className="text-sm text-gray"> Orders Completed</p>
           </div>
-          <div className="text-center space-y-0">
+          <div className="text-center space-y-0 ">
             {" "}
-            <p className="font-bold text-xl text-purple"> 430</p>{" "}
+            <p className="font-bold text-xl text-purple">
+              {" "}
+              {metadata ? (
+                metadata?.suppliers
+              ) : (
+                <AiOutlineLoading3Quarters className="text-center w-full animate-spin" />
+              )}
+            </p>{" "}
             <p className="text-sm text-gray"> Suppliers</p>
           </div>
           <div className="text-center space-y-0">
             {" "}
-            <p className="font-bold text-xl text-purple"> 12 yrs</p>{" "}
+            <p className="font-bold text-xl text-purple">
+              {" "}
+              {metadata ? (
+                metadata?.experience
+              ) : (
+                <AiOutlineLoading3Quarters className="text-center w-full animate-spin" />
+              )}
+            </p>{" "}
             <p className="text-sm text-gray"> Average Experience</p>
           </div>
         </div>

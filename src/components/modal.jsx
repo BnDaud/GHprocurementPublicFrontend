@@ -14,7 +14,7 @@ function Modal({ toggleModal, DisplayContent }) {
         <div className=" w-2/5 hidden md:block">
           {" "}
           <img
-            src={DisplayContent.image}
+            src={DisplayContent.featured_image}
             alt="Logo"
             className="w-full h-1/2 object-cover rounded-t-2xl"
           />{" "}

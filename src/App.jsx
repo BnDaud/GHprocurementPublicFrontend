@@ -1,4 +1,4 @@
-import { createContext, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import Navbar from "./components/nav";
 import Home from "./pages/home";
 import Blog from "./pages/blog";
@@ -6,9 +6,16 @@ import Portfolio from "./pages/portfolio";
 import RequestQoute from "./pages/requestQ";
 import Services from "./pages/services";
 import Contact from "./pages/contact";
+import API from "./endpoint/base";
+
 export const globalContext = createContext();
 
 function App() {
+  const [metadata, setMetadata] = useState(null);
+  const [service, setServices] = useState(null);
+  const [blogs, setBlogs] = useState(null);
+  const [FAQ, setFAQ] = useState(null);
+
   const home = useRef(null);
   const services = useRef(null);
   const portfolio = useRef(null);
@@ -37,10 +44,41 @@ function App() {
     setDropDown(!dropdown);
   };
 
+  useEffect(() => {
+    const url = API.alldata();
+
+    const fetchAllData = async () => {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("server down");
+        const data = await res.json();
+
+        console.log(data);
+
+        setFAQ(data.faq);
+        setMetadata(data.metadata[0]);
+        setBlogs(data.blogs);
+        setServices(data.service);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchAllData();
+  }, []);
+
   return (
     <>
       <globalContext.Provider
-        value={{ dropdown, handledropdown, scrollToSection }}
+        value={{
+          dropdown,
+          handledropdown,
+          scrollToSection,
+          blogs,
+          metadata,
+          service,
+          FAQ,
+        }}
       >
         {" "}
         <div className="fixed w-full top-0 left-0 z-50">
