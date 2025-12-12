@@ -15,6 +15,7 @@ function App() {
   const [service, setServices] = useState(null);
   const [blogs, setBlogs] = useState(null);
   const [FAQ, setFAQ] = useState(null);
+  const [tweets, setTweets] = useState(null);
 
   const home = useRef(null);
   const services = useRef(null);
@@ -59,6 +60,7 @@ function App() {
         setMetadata(data.metadata[0]);
         setBlogs(data.blogs);
         setServices(data.service);
+        setTweets(data.twitter);
       } catch (err) {
         console.log(err);
       }
@@ -78,14 +80,17 @@ function App() {
           metadata,
           service,
           FAQ,
+          tweets,
         }}
       >
         {" "}
-        <div className="fixed w-full top-0 left-0 z-50">
-          {" "}
+        <div className="fixed w-full  top-0 left-0 z-10">
           <Navbar scrollToSection={scrollToSection} />
         </div>
-        <main className="pt-15 bg-light/70" onClick={() => setDropDown(false)}>
+        <main
+          className="pt-14 sm:pt-16 bg-light/70"
+          onClick={() => setDropDown(false)}
+        >
           <section ref={home} className="  scroll-mt-15">
             {" "}
             <Home />{" "}
@@ -94,21 +99,18 @@ function App() {
             {" "}
             <Services />{" "}
           </section>
-          <section ref={portfolio} className="h-screen bg-white scroll-mt-15">
+          <section ref={portfolio} className=" scroll-mt-15">
             {" "}
             <Portfolio />{" "}
           </section>
           <section ref={blog} className=" scroll-mt-15">
             <Blog />
           </section>
-          <div className=" md:flex md:px-20">
-            {" "}
-            <section ref={contact} className="md:w-7/12 scroll-mt-15">
-              {" "}
+          <div className="flex flex-col md:flex-row md:px-5">
+            <section ref={contact} className="w-full lg:w-7/12 scroll-mt-15">
               <Contact />
             </section>
-            <section ref={rfq} className="md:w-5/12 scroll-mt-15">
-              {" "}
+            <section ref={rfq} className="w-full lg:w-5/12 scroll-mt-15">
               <RequestQoute />
             </section>
           </div>

@@ -2,55 +2,55 @@ import React from "react";
 
 function RequestQuote() {
   return (
-    <div className="w-full min-h-100  px-6 pb-20 space-y-4 mt-10">
+    <div className="w-full min-h-100  px-2  md:pr-5 lg:pr-10 pb-20 space-y-4 mt-10">
       <div className="w-full min-h-85 p-4 bg-white rounded-2xl">
         <p className="text-xl font-bold">Request For Quote</p>
 
-        <form className="mt-5 space-y-2">
+        <form className="mt-5 space-y-2 text-sm md:text-base">
           {" "}
           <div className="flex justify-between">
-            <label className="font-semibold mr-4">
+            <label className="font-semibold mr-2 md:mr-4">
               {" "}
               Name<span className="text-red-600"> *</span>
             </label>
             <input
-              className="h-10 w-70 p-2 px-3 rounded-xl  bg-white border-gray border"
+              className="h-10 w-55 md:w-70  p-2 px-3 rounded-xl  bg-white border-gray border"
               placeholder="Full Name"
               required
               type="text"
             />
           </div>{" "}
           <div className="flex justify-between">
-            <label className="font-semibold mr-4">
+            <label className="font-semibold md:mr-4 mr-2">
               {" "}
               Email<span className="text-red-600"> *</span>
             </label>
             <input
-              className="h-10 w-70 p-2 px-3 rounded-xl  bg-white border-gray border"
+              className="h-10 md:w-70 w-55 p-2 px-3 rounded-xl  bg-white border-gray border"
               placeholder="example@email.com"
               required
               type="email"
             />
           </div>{" "}
           <div className="flex justify-between">
-            <label className="font-semibold mr-4">
+            <label className="font-semibold mr-2 md:mr-4">
               {" "}
-              Company<span className="text-red-600"> *</span>
+              From<span className="text-red-600"> *</span>
             </label>
             <input
-              className="h-10 w-70 p-2 px-3 rounded-xl  bg-white border-gray border"
+              className="h-10 md:w-70 w-55 p-2 px-3 rounded-xl  bg-white border-gray border"
               placeholder="Company Name"
               required
               type="text"
             />
           </div>{" "}
           <div className="flex justify-between">
-            <label className="font-semibold mr-4">
+            <label className="font-semibold mr-2 md:mr-4">
               {" "}
               Item<span className="text-red-600"> *</span>
             </label>
             <textarea
-              className="h-40 w-70 p-2 px-3 rounded-xl  bg-white border-gray border"
+              className="h-40 md:w-70 w-55 p-2 px-3 rounded-xl  bg-white border-gray border"
               placeholder="Full Name"
               required
               type="text"
@@ -59,11 +59,11 @@ function RequestQuote() {
           <div className="flex justify-between">
             <label className="font-semibold mr-4">
               {" "}
-              Attachment<span className="text-red-600"> *</span>
+              File<span className="text-red-600"> *</span>
             </label>
             <input
-              className="h-10 w-70 p-2 px-3 rounded-xl  bg-white border-gray border"
-              placeholder="Full Name"
+              className="h-10 md:w-70 w-55 p-2 px-3 rounded-xl  bg-white border-gray border"
+              placeholder="Description"
               required
               type="file"
               accept="image/*"
