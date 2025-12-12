@@ -98,7 +98,7 @@ function Tweets() {
               >
                 {" "}
                 <div className="absolute right-3 top-4 bg-purple text-peach px-2 py-1 rounded-lg cursor-pointer font-semibold">
-                  Read On X
+                  View On X
                 </div>
               </a>
             </div>
