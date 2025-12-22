@@ -1,12 +1,33 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { globalContext } from "../App";
 import { FaArrowRight } from "react-icons/fa";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
+import truck from "../images/truck1.jpg";
+import air1 from "../images/air1.jpg";
+import air2 from "../images/air2.jpg";
 function Home() {
   const { scrollToSection, metadata } = useContext(globalContext);
+  const images = [truck, air1, air2];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 3000); // change image every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="md:relative static  px-2 md:px-5 lg:px-20 lg:py-20 py-10 space-y-4">
+      {metadata && (
+        <div
+          className="absolute inset-0 -z-10 bg-cover bg-center transition-all duration-1000"
+          style={{ backgroundImage: `url(${images[currentIndex]})` }}
+        ></div>
+      )}
+
       <p className="text-3xl font-bold md:w-1/2"> {metadata?.metaIntro}</p>
       <p className="md:w-3/5">{metadata?.metaDescription}</p>
       {/* the 6 pass to the function below is id

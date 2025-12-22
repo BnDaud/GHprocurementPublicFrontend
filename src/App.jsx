@@ -1,7 +1,7 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import Navbar from "./components/nav";
 import Home from "./pages/home";
-
+import { FaRegCopyright } from "react-icons/fa";
 import Portfolio from "./pages/portfolio";
 import RequestQoute from "./pages/requestQ";
 import Services from "./pages/services";
@@ -12,6 +12,8 @@ import Catalog from "./pages/catalog";
 export const globalContext = createContext();
 
 function App() {
+  const currenYear = new Date().getFullYear();
+
   const [metadata, setMetadata] = useState(null);
   const [service, setServices] = useState(null);
   const [catalogs, setCatalogs] = useState(null);
@@ -117,6 +119,13 @@ function App() {
             </section>
           </div>
         </main>
+        <footer>
+          <div className="flex items-center justify-center gap-4 bg-peach w-full h-15 text-sm text-gray">
+            {" "}
+            <FaRegCopyright />{" "}
+            <p> 2021 - {currenYear} Gh Procurement. All rights reserved.</p>
+          </div>
+        </footer>
       </globalContext.Provider>
     </>
   );
