@@ -20,7 +20,7 @@ function Tweets() {
   return (
     <div className="flex flex-wrap justify-center gap-4 w-full">
       {tweets && tweets.data !== "Unable to fetch post" ? (
-        tweets.data.map((tweet) => {
+        tweets?.data?.map((tweet) => {
           const key = tweet?.attachments?.media_keys?.[0];
           const media = tweets?.includes?.media || [];
 

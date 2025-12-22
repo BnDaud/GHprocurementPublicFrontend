@@ -9,8 +9,9 @@ function Navbar({ scrollToSection }) {
   const navContent = [
     { name: "home", id: 1 },
     { name: "Services", id: 2 },
-    { name: "Portfolio", id: 3 },
-    { name: "Blog", id: 4 },
+    { name: "Catalog", id: 3 },
+    { name: "Portfolio", id: 4 },
+
     { name: "Contact", id: 5 },
     { name: "Request Quote", id: 6 },
   ];
