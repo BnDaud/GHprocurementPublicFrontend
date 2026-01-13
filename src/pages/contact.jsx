@@ -51,7 +51,7 @@ function Contact() {
           <p className="text-xl font-bold uppercase">FAQ</p>
           <div className="space-y-2 mt-2">
             {" "}
-            {FAQ ? (
+            {FAQ && FAQ.length > 0 ? (
               FAQ.map((faq, index) => {
                 return (
                   <div key={index}>

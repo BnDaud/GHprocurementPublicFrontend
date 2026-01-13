@@ -7,8 +7,11 @@ function Modal({ toggleModal, DisplayContent }) {
         {/* The left hand side */}
         <div className=" md:w-3/5 w-full">
           {" "}
-          <p className="text-xl font-bold"> {DisplayContent.title}</p>
-          <div className="overflow-auto h-90"> {DisplayContent?.content}</div>
+          <p className="text-xl font-bold"> {DisplayContent.name}</p>
+          <div className="overflow-auto h-90 mt-5">
+            {" "}
+            {DisplayContent?.description}
+          </div>
         </div>{" "}
         {/* the right hand side */}
         <div className=" w-2/5 hidden md:block">
@@ -18,15 +21,12 @@ function Modal({ toggleModal, DisplayContent }) {
             alt="Logo"
             className="w-full h-1/2 object-cover rounded-t-2xl"
           />{" "}
-          <p className="px-2 text-xl font-bold "> {DisplayContent.title}</p>{" "}
-          <p className="px-2 text-lg break-all mt-2">
-            {DisplayContent.excerpt}
-          </p>
+          <p className="px-2 text-xl font-bold "> {DisplayContent.name}</p>{" "}
           <p className="px-2 text-sm text-gray break-all mt-2">
-            Author : <span>{DisplayContent?.Author || "GH Pro "} </span>
+            Author : <span>{DisplayContent?.Author || "GH Procurement "} </span>
           </p>
           <p className="px-2 text-sm text-gray break-all mb-3">
-            Date : <span>{DisplayContent?.date} </span>
+            Date : <span>{DisplayContent?.created_at} </span>
           </p>
         </div>
         <div

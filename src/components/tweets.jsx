@@ -6,6 +6,8 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 function Tweets() {
   const { tweets } = useContext(globalContext);
 
+  //console.log(tweets);
+
   const filterFile = (media, key) => {
     const attachment = media.filter((a) => a.media_key === key);
 
@@ -20,7 +22,7 @@ function Tweets() {
   return (
     <div className="flex flex-wrap justify-center gap-4 w-full">
       {tweets && tweets.data !== "Unable to fetch post" ? (
-        tweets.data.map((tweet) => {
+        tweets?.data?.map((tweet) => {
           const key = tweet?.attachments?.media_keys?.[0];
           const media = tweets?.includes?.media || [];
 
@@ -98,7 +100,7 @@ function Tweets() {
               >
                 {" "}
                 <div className="absolute right-3 top-4 bg-purple text-peach px-2 py-1 rounded-lg cursor-pointer font-semibold">
-                  Read On X
+                  View On X
                 </div>
               </a>
             </div>

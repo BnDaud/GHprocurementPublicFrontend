@@ -1,34 +1,38 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import Navbar from "./components/nav";
 import Home from "./pages/home";
-import Blog from "./pages/blog";
+import { FaRegCopyright } from "react-icons/fa";
 import Portfolio from "./pages/portfolio";
 import RequestQoute from "./pages/requestQ";
 import Services from "./pages/services";
 import Contact from "./pages/contact";
 import API from "./endpoint/base";
+import Catalog from "./pages/catalog";
 
 export const globalContext = createContext();
 
 function App() {
+  const currenYear = new Date().getFullYear();
+
   const [metadata, setMetadata] = useState(null);
   const [service, setServices] = useState(null);
-  const [blogs, setBlogs] = useState(null);
+  const [catalogs, setCatalogs] = useState(null);
   const [FAQ, setFAQ] = useState(null);
   const [tweets, setTweets] = useState(null);
 
   const home = useRef(null);
   const services = useRef(null);
   const portfolio = useRef(null);
-  const blog = useRef(null);
+  const catalog = useRef(null);
   const contact = useRef(null);
   const rfq = useRef(null);
 
   const section = {
     1: home,
     2: services,
-    3: portfolio,
-    4: blog,
+    3: catalog,
+    4: portfolio,
+
     5: contact,
     6: rfq,
   };
@@ -58,7 +62,7 @@ function App() {
 
         setFAQ(data.faq);
         setMetadata(data.metadata[0]);
-        setBlogs(data.blogs);
+        setCatalogs(data.catalogs);
         setServices(data.service);
         setTweets(data.twitter);
       } catch (err) {
@@ -76,7 +80,7 @@ function App() {
           dropdown,
           handledropdown,
           scrollToSection,
-          blogs,
+          catalogs,
           metadata,
           service,
           FAQ,
@@ -99,12 +103,12 @@ function App() {
             {" "}
             <Services />{" "}
           </section>
+          <section ref={catalog} className=" scroll-mt-15">
+            <Catalog />{" "}
+          </section>{" "}
           <section ref={portfolio} className=" scroll-mt-15">
             {" "}
             <Portfolio />{" "}
-          </section>
-          <section ref={blog} className=" scroll-mt-15">
-            <Blog />
           </section>
           <div className="flex flex-col md:flex-row md:px-5">
             <section ref={contact} className="w-full lg:w-7/12 scroll-mt-15">
@@ -115,6 +119,13 @@ function App() {
             </section>
           </div>
         </main>
+        <footer>
+          <div className="flex items-center justify-center gap-4 bg-peach w-full h-15 text-sm text-gray">
+            {" "}
+            <FaRegCopyright />{" "}
+            <p> 2021 - {currenYear} Gh Procurement. All rights reserved.</p>
+          </div>
+        </footer>
       </globalContext.Provider>
     </>
   );
