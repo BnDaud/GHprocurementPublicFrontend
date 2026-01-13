@@ -6,6 +6,8 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 function Tweets() {
   const { tweets } = useContext(globalContext);
 
+  //console.log(tweets);
+
   const filterFile = (media, key) => {
     const attachment = media.filter((a) => a.media_key === key);
 

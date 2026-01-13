@@ -3,7 +3,7 @@ import { globalContext } from "../App";
 
 function Services() {
   const { service } = useContext(globalContext);
-  console.log(service);
+  //  console.log(service);
   return (
     <div className="  px-2  md:px-5 lg:px-20 lg:py-20 py-10 space-y-4">
       <p className="text-lg font-bold">Services</p>
