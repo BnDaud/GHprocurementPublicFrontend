@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import API from "../endpoint/base";
 import "react-phone-input-2/lib/style.css";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 function RequestQuote() {
   const initialState = {
     email: "",
@@ -14,9 +16,12 @@ function RequestQuote() {
   const [payload, setPayload] = useState(initialState);
   const [imagepreview, setImagepreview] = useState("");
   const [submit, setSubmit] = useState(false);
-
+  const [loading , setLoading] = useState(false)
+  const fileInputRef = useRef(null);
   useEffect(() => {
+
     const SendRFQ = async () => {
+       setLoading(true)
       const url = API.sendRFQ();
       const body = new FormData();
       body.append("email", payload.email);
@@ -38,12 +43,24 @@ function RequestQuote() {
         console.log("Returned data", data);
       } catch (e) {
         console.log(e.message);
+      
+      }
+      finally{
+         setLoading(false)
+          setSubmit(false);
+          setPayload(initialState)
+          setImagepreview("")
+          if (fileInputRef.current){
+            fileInputRef.current.value= ""
+          }
       }
     };
     if (submit) {
+     
       console.log(payload);
       SendRFQ();
-      setSubmit(false);
+     
+     
     }
   }, [submit]);
 
@@ -134,6 +151,7 @@ function RequestQuote() {
               File<span className="text-red-600"> *</span>
             </label>
             <input
+            ref = {fileInputRef}
               className="h-10 md:w-70 w-55 p-2 px-3 rounded-xl  bg-white border-gray border"
               placeholder="Description"
               required
@@ -154,13 +172,17 @@ function RequestQuote() {
           )}
           <div className="flex gap-4 mt-5">
             {" "}
-            <div
+            <button
+            disabled={loading}
               className="bg-purple px-4 py-2 text-center text-peach font-bold rounded-xl cursor-pointer"
-              onClick={() => setSubmit(!submit)}
+              onClick={(e) => {e.preventDefault(); setSubmit(true)}}
             >
-              Send RFQ
-            </div>
-            <div className=" px-4 py-2 text-center text-purple outline hover:bg-purple hover:text-peach hover-outline-none font-bold rounded-xl">
+              {loading ? <AiOutlineLoading3Quarters className="font-bold animate-spin"/>: <p> Send RFQ</p>}
+            </button>
+            <div className=" px-4 py-2 text-center text-purple outline hover:bg-purple hover:text-peach hover-outline-none font-bold rounded-xl" onClick={()=> {setPayload(initialState)  ;setImagepreview("");
+          if (fileInputRef.current){
+            fileInputRef.current.value= ""
+          }}}>
               {" "}
               Reset
             </div>{" "}
