@@ -121,7 +121,7 @@ function RequestQuote() {
             </label>
             <textarea
               className="h-40 md:w-70 w-55 p-2 px-3 rounded-xl  bg-white border-gray border"
-              placeholder="Full Name"
+              placeholder="Describe your package"
               required
               type="text"
               value={payload.item}
