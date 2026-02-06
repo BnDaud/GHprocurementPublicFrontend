@@ -2,9 +2,11 @@ import { useContext } from "react";
 import Logo from "../images/Logo.png";
 import { RiDropdownList } from "react-icons/ri";
 import { globalContext } from "../App";
+import { Link } from "react-router-dom";
 
-function Navbar({ scrollToSection }) {
-  const { dropdown, handledropdown } = useContext(globalContext);
+function Navbar() {
+  const { dropdown, handledropdown, setScrollToSectionValue } =
+    useContext(globalContext);
 
   const navContent = [
     { name: "home", id: 1 },
@@ -13,7 +15,7 @@ function Navbar({ scrollToSection }) {
     { name: "Portfolio", id: 4 },
 
     { name: "Contact", id: 5 },
-    { name: "Request Quote", id: 6 },
+    //   { name: "Request Quote", id: 6 },
   ];
 
   const specialStyle =
@@ -29,18 +31,34 @@ function Navbar({ scrollToSection }) {
       />
 
       {/* Desktop Navigation */}
-      <div className="hidden md:flex gap-6 text-purple items-center">
-        {navContent.map((content) => (
+      <div className="flex justify-between w-4/5 ">
+        {" "}
+        <div className="hidden md:flex gap-6 text-purple items-center">
+          {navContent.map((content) => (
+            <p
+              key={content.id}
+              onClick={() => setScrollToSectionValue(content.id)}
+              className={`font-bold capitalize cursor-pointer hover:bg-purple hover:text-peach px-2 py-1 rounded-xl`}
+            >
+              {content.name}
+            </p>
+          ))}
+        </div>
+        <div className="hidden md:flex gap-6 text-purple items-center">
           <p
-            key={content.id}
-            onClick={() => scrollToSection(content.id)}
-            className={`font-bold capitalize cursor-pointer hover:bg-purple hover:text-peach px-2 py-1 rounded-xl ${
-              content.id === 6 ? specialStyle : ""
+            className={`font-bold capitalize cursor-pointer hover:bg-purple hover:text-peach px-2 py-1 rounded-lg ${
+              specialStyle
             }`}
+            onClick={() => setScrollToSectionValue(6)}
           >
-            {content.name}
+            {" "}
+            Get Started{" "}
           </p>
-        ))}
+          <p className="font-bold border border-purple w-24 text-center text-purple hover:bg-purple hover:text-peach py-1 px-2 rounded-lg cursor-pointer">
+            {" "}
+            <Link to={"/signin"}> Sign In</Link>
+          </p>
+        </div>
       </div>
 
       {/* Mobile Dropdown */}
@@ -54,14 +72,27 @@ function Navbar({ scrollToSection }) {
             {navContent.map((content) => (
               <p
                 key={content.id}
-                onClick={() => scrollToSection(content.id)}
-                className={`font-bold capitalize cursor-pointer hover:bg-purple hover:text-peach px-2 py-1 rounded-xl ${
-                  content.id === 6 ? specialStyle : ""
-                }`}
+                onClick={() => setScrollToSectionValue(content.id)}
+                className={`font-bold capitalize cursor-pointer hover:bg-purple hover:text-peach px-2 py-1 rounded-xl `}
               >
                 {content.name}
               </p>
             ))}
+            <div className="md:hidden space-y-2 text-purple items-center">
+              <p
+                className={`font-bold capitalize cursor-pointer hover:bg-purple hover:text-peach px-2 py-1 rounded-lg ${
+                  specialStyle
+                }`}
+                onClick={() => setScrollToSectionValue(6)}
+              >
+                {" "}
+                Get Started{" "}
+              </p>
+              <p className="font-bold border border-purple w-24 text-center text-purple hover:bg-purple hover:text-peach py-1 px-2 rounded-lg cursor-pointer">
+                {" "}
+                <Link to={"/signin"}> Sign In</Link>
+              </p>
+            </div>
           </div>
         )}
       </div>

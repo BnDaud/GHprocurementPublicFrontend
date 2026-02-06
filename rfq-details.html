@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RFQ Progress</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    h1 {
+        margin-bottom: 5px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        background: #ffe58f;
+        color: #7a5d00;
+        margin-top: 8px;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    /* RFQ Summary */
+    .summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        font-size: 14px;
+    }
+
+    /* Timeline */
+    .timeline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .step {
+        flex: 1;
+        min-width: 150px;
+        padding: 12px;
+        border-radius: 6px;
+        background: #eaeaea;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .step.completed {
+        background: #d1f7d6;
+        color: #256029;
+    }
+
+    .step.current {
+        background: #cce5ff;
+        color: #004085;
+        font-weight: bold;
+    }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background: #f0f2f5;
+    }
+
+    /* Actions */
+    .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 10px 14px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: #fff;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: #fff;
+    }
+
+    /* Activity Log */
+    .activity {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+        .timeline {
+            flex-direction: column;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <h1>RFQ #RFQ-2026-0142</h1>
+    <span class="status-badge">Awaiting Supplier Quotes</span>
+
+    <!-- Summary -->
+    <div class="card">
+        <div class="summary">
+            <div><strong>Submitted:</strong> 12 Jan 2026</div>
+            <div><strong>Category:</strong> Industrial Equipment</div>
+            <div><strong>Items:</strong> 6</div>
+            <div><strong>Estimated Value:</strong> $45,000</div>
+            <div><strong>Delivery Location:</strong> Lagos, Nigeria</div>
+            <div><strong>Contact:</strong> Procurement Team</div>
+        </div>
+    </div>
+
+    <!-- Progress Timeline -->
+    <div class="card">
+        <h3>RFQ Progress</h3>
+        <div class="timeline">
+            <div class="step completed">RFQ Submitted</div>
+            <div class="step completed">Requirements Reviewed</div>
+            <div class="step completed">Suppliers Notified</div>
+            <div class="step current">Awaiting Quotes</div>
+            <div class="step">Quotes Received</div>
+            <div class="step">Evaluation</div>
+            <div class="step">Decision</div>
+        </div>
+        <p style="margin-top:10px;">
+            We’ve sent your RFQ to 8 qualified suppliers.  
+            Expected first quotes by <strong>18 Jan 2026</strong>.
+        </p>
+    </div>
+
+    <!-- RFQ Details -->
+    <div class="card">
+        <h3>RFQ Details</h3>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Specification</th>
+            </tr>
+            <tr>
+                <td>Industrial Pump</td>
+                <td>2</td>
+                <td>High-pressure, stainless steel</td>
+            </tr>
+            <tr>
+                <td>Control Panel</td>
+                <td>4</td>
+                <td>IP65 Rated</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Supplier Activity -->
+    <div class="card">
+        <h3>Supplier Activity</h3>
+        <table>
+            <tr>
+                <th>Supplier</th>
+                <th>Status</th>
+                <th>Last Update</th>
+            </tr>
+            <tr>
+                <td>Alpha Industrial</td>
+                <td>Quote Submitted</td>
+                <td>14 Jan 2026</td>
+            </tr>
+            <tr>
+                <td>BuildTech Ltd</td>
+                <td>Reviewing RFQ</td>
+                <td>15 Jan 2026</td>
+            </tr>
+            <tr>
+                <td>Nova Supplies</td>
+                <td>No Response</td>
+                <td>—</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="card">
+        <h3>Activity Log</h3>
+        <div class="activity">
+            • 12 Jan – RFQ submitted<br>
+            • 12 Jan – Requirements reviewed<br>
+            • 13 Jan – RFQ sent to suppliers<br>
+            • 14 Jan – Quote received from Alpha Industrial
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card">
+        <h3>Actions</h3>
+        <div class="actions">
+            <button class="btn btn-primary">Message Procurement Team</button>
+            <button class="btn btn-secondary">Download RFQ PDF</button>
+            <button class="btn btn-danger">Cancel RFQ</button>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
+

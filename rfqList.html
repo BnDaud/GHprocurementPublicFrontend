@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My RFQs</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    h1 {
+        margin-bottom: 15px;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    /* RFQ Table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background: #f0f2f5;
+    }
+
+    tr:hover {
+        background: #f9fafb;
+        cursor: pointer;
+    }
+
+    /* Status Badges */
+    .status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .status-pending {
+        background: #ffe58f;
+        color: #7a5d00;
+    }
+
+    .status-review {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-completed {
+        background: #d1f7d6;
+        color: #256029;
+    }
+
+    .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    /* Top Actions */
+    .top-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 14px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="top-actions">
+        <h1>My RFQs</h1>
+        <button class="btn btn-primary">Create New RFQ</button>
+    </div>
+
+    <div class="card">
+        <table>
+            <tr>
+                <th>RFQ ID</th>
+                <th>Category</th>
+                <th>Items</th>
+                <th>Submitted</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+            <!-- RFQ Row -->
+            <tr onclick="location.href='rfq-details.html'">
+                <td>RFQ-2026-0142</td>
+                <td>Industrial Equipment</td>
+                <td>6</td>
+                <td>12 Jan 2026</td>
+                <td><span class="status status-pending">Awaiting Quotes</span></td>
+                <td><a href="rfq-details.html">View</a></td>
+            </tr>
+
+            <tr onclick="location.href='rfq-details.html'">
+                <td>RFQ-2026-0138</td>
+                <td>Electrical Supplies</td>
+                <td>12</td>
+                <td>05 Jan 2026</td>
+                <td><span class="status status-review">Under Review</span></td>
+                <td><a href="rfq-details.html">View</a></td>
+            </tr>
+
+            <tr onclick="location.href='rfq-details.html'">
+                <td>RFQ-2025-0994</td>
+                <td>Construction Materials</td>
+                <td>20</td>
+                <td>18 Dec 2025</td>
+                <td><span class="status status-completed">Completed</span></td>
+                <td><a href="rfq-details.html">View</a></td>
+            </tr>
+
+            <tr onclick="location.href='rfq-details.html'">
+                <td>RFQ-2025-0981</td>
+                <td>Office Equipment</td>
+                <td>3</td>
+                <td>10 Dec 2025</td>
+                <td><span class="status status-cancelled">Cancelled</span></td>
+                <td><a href="rfq-details.html">View</a></td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

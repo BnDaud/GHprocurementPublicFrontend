@@ -1,13 +1,13 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import Navbar from "./components/nav";
-import Home from "./pages/home";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { FaRegCopyright } from "react-icons/fa";
-import Portfolio from "./pages/portfolio";
-import RequestQoute from "./pages/requestQ";
-import Services from "./pages/services";
-import Contact from "./pages/contact";
+
 import API from "./endpoint/base";
-import Catalog from "./pages/catalog";
+
+import LandingPage from "./pages/landingpage";
+import Loign from "./Auth/login";
+import NotFound from "./pages/notFound";
 
 export const globalContext = createContext();
 
@@ -19,35 +19,30 @@ function App() {
   const [catalogs, setCatalogs] = useState(null);
   const [FAQ, setFAQ] = useState(null);
   const [tweets, setTweets] = useState(null);
+  const [scrollToSectionValue, setScrollToSectionValue] = useState(1);
 
-  const home = useRef(null);
-  const services = useRef(null);
-  const portfolio = useRef(null);
-  const catalog = useRef(null);
-  const contact = useRef(null);
-  const rfq = useRef(null);
-
-  const section = {
-    1: home,
-    2: services,
-    3: catalog,
-    4: portfolio,
-
-    5: contact,
-    6: rfq,
-  };
-  const scrollToSection = (id) => {
-    section[id].current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "nearest",
-    });
-  };
   const [dropdown, setDropDown] = useState(false);
 
   const handledropdown = () => {
     setDropDown(!dropdown);
   };
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const sectionId = location.state.scrollTo;
+
+      const timer = setTimeout(() => {
+        setScrollToSectionValue(sectionId);
+
+        navigate(location.pathname, { replace: true, state: {} });
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [location]);
 
   useEffect(() => {
     const url = API.alldata();
@@ -79,7 +74,8 @@ function App() {
         value={{
           dropdown,
           handledropdown,
-          scrollToSection,
+          scrollToSectionValue,
+          setScrollToSectionValue,
           catalogs,
           metadata,
           service,
@@ -89,35 +85,17 @@ function App() {
       >
         {" "}
         <div className="fixed w-full  top-0 left-0 z-10">
-          <Navbar scrollToSection={scrollToSection} />
+          <Navbar />
         </div>
         <main
           className="pt-14 sm:pt-16 bg-light/70"
           onClick={() => setDropDown(false)}
         >
-          <section ref={home} className="  scroll-mt-15">
-            {" "}
-            <Home />{" "}
-          </section>{" "}
-          <section ref={services} className="scroll-mt-15">
-            {" "}
-            <Services />{" "}
-          </section>
-          <section ref={catalog} className=" scroll-mt-15">
-            <Catalog />{" "}
-          </section>{" "}
-          <section ref={portfolio} className=" scroll-mt-15">
-            {" "}
-            <Portfolio />{" "}
-          </section>
-          <div className="flex flex-col md:flex-row md:px-5">
-            <section ref={contact} className="w-full lg:w-7/12 scroll-mt-15">
-              <Contact />
-            </section>
-            <section ref={rfq} className="w-full lg:w-5/12 scroll-mt-15">
-              <RequestQoute />
-            </section>
-          </div>
+          <Routes>
+            <Route path="*" element={<NotFound />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/signin" element={<Loign />} />
+          </Routes>
         </main>
         <footer>
           <div className="flex items-center justify-center gap-4 bg-peach w-full h-15 text-sm text-gray">
