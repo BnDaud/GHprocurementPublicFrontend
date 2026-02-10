@@ -8,11 +8,20 @@ import API from "./endpoint/base";
 import LandingPage from "./pages/landingpage";
 import Loign from "./Auth/login";
 import NotFound from "./pages/notFound";
+import UserRfq from "./pages/userRFQ";
+import RfqDetail from "./pages/RfqDetail";
 
 export const globalContext = createContext();
 
 function App() {
   const currenYear = new Date().getFullYear();
+
+  const homeurl = window.location.origin;
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  console.log(homeurl);
+  console.log(location);
 
   const [metadata, setMetadata] = useState(null);
   const [service, setServices] = useState(null);
@@ -26,9 +35,6 @@ function App() {
   const handledropdown = () => {
     setDropDown(!dropdown);
   };
-
-  const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (location.state?.scrollTo) {
@@ -95,10 +101,12 @@ function App() {
             <Route path="*" element={<NotFound />} />
             <Route path="/" element={<LandingPage />} />
             <Route path="/signin" element={<Loign />} />
+            <Route path="/userrfq" element={<UserRfq />} />
+            <Route path="/userrfq/:id" element={<RfqDetail />} />
           </Routes>
         </main>
         <footer>
-          <div className="flex items-center justify-center gap-4 bg-peach w-full h-15 text-sm text-gray">
+          <div className=" flex items-center justify-center gap-4 bg-peach w-full h-15 text-sm text-gray">
             {" "}
             <FaRegCopyright />{" "}
             <p> 2021 - {currenYear} Gh Procurement. All rights reserved.</p>

@@ -18,22 +18,21 @@ function Navbar() {
     //   { name: "Request Quote", id: 6 },
   ];
 
-  const specialStyle =
-    "font-bold bg-purple text-center text-peach py-1 px-2 rounded-lg";
+  const specialStyle = "font-bold bg-purple text-center text-peach  rounded-lg";
 
   return (
-    <div className="relative md:static flex flex-row md:flex-row items-center justify-between h-16  px-4 sm:px-6 lg:px-20 bg-peach">
+    <div className="relative md:static flex flex-row md:flex-row items-center justify-between h-16  px-[5%] lg:px-[15%] bg-peach">
       {/* Logo */}
       <img
         src={Logo}
         alt="Logo"
-        className="h-20 w-20 sm:h-12 sm:w-12 md:h-30 md:w-30"
+        className="h-20 w-20 sm:h-12 sm:w-12 md:h-30 md:w-30 "
       />
 
       {/* Desktop Navigation */}
-      <div className="flex justify-between w-4/5 ">
+      <div className="flex justify-between w-4/5  ">
         {" "}
-        <div className="hidden md:flex gap-6 text-purple items-center">
+        <div className="hidden w-1/3 md:flex gap-6 text-purple items-center">
           {navContent.map((content) => (
             <p
               key={content.id}
@@ -44,9 +43,9 @@ function Navbar() {
             </p>
           ))}
         </div>
-        <div className="hidden md:flex gap-6 text-purple items-center">
+        <div className="hidden w-1/3 md:flex gap-6 text-purple items-center">
           <p
-            className={`font-bold capitalize cursor-pointer hover:bg-purple hover:text-peach px-2 py-1 rounded-lg ${
+            className={`font-bold w-3/5 capitalize cursor-pointer text-xs hover:text-peach  py-3 rounded-lg ${
               specialStyle
             }`}
             onClick={() => setScrollToSectionValue(6)}
