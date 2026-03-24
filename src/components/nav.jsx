@@ -13,7 +13,7 @@ function Navbar({ scrollToSection }) {
     { name: "Portfolio", id: 4 },
 
     { name: "Contact", id: 5 },
-    { name: "Request Quote", id: 6 },
+    { name: "RFQ / BUY", id: 6 },
   ];
 
   const specialStyle =
