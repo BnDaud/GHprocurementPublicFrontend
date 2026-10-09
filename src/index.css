@@ -8,4 +8,88 @@
   --color-light: #f8fafc;
   --color-bgcolor: #f5f7fa;
   --color-vanilla: #fffafa;
+  --color-aubergine: #1c0624;
+  --color-lilac: #f3e8f6;
+  --color-cream: #fff7f5;
+  --color-plum: #a5367a;
+  --color-line: #eadfee;
+  --color-muted: #5d4f66;
+  --color-blush: #fbf4f7;
+  --font-sans: 'Manrope', system-ui, sans-serif;
+}
+
+html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);color:#1d1325;background:#fff7f5}
+
+/* The design reads best at 80% zoom, so desktop screens get that by default.
+   (Phones and small tablets keep their normal size.) */
+@media (min-width: 1024px) {
+  html {
+    zoom: 0.8;
+  }
+}
+
+/* feed switch: cards rise in one after another, and fade out the same way */
+@keyframes feed-in {
+  from { opacity: 0; transform: translateY(22px) scale(.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes feed-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-10px) scale(.98); }
+}
+.feed-in { animation: feed-in .55s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+.feed-out { animation: feed-out .28s ease-in both; animation-delay: calc(var(--i, 0) * 20ms); }
+@media (prefers-reduced-motion: reduce) {
+  .feed-in, .feed-out { animation: none; }
+  .transition-transform, .transition-\[height\] { transition: none; }
+}
+
+/* Tailwind 4 leaves buttons with the plain arrow: anything you can click shows the pointer hand */
+@layer base {
+  button:not(:disabled),
+  [role="button"],
+  summary,
+  select,
+  label[for],
+  a[href],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"],
+  input[type="submit"],
+  input[type="file"]::file-selector-button {
+    cursor: pointer;
+  }
+  button:disabled,
+  input:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* the page is scaled to 80% on desktops, which also shrinks "100vh"; this restores a full-height page */
+@media (min-width: 1024px) {
+  .min-h-screen {
+    min-height: 125vh;
+  }
+}
+
+/* thin, quiet scrollbars everywhere: the page, pop-ups and lists */
+html,
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #b9a9c2 transparent;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #b9a9c2;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8d7f96;
 }
