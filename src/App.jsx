@@ -1,133 +1,142 @@
-import { createContext, useEffect, useRef, useState } from "react";
-import Navbar from "./components/nav";
-import Home from "./pages/home";
-import { FaRegCopyright } from "react-icons/fa";
-import Portfolio from "./pages/portfolio";
-import RequestQoute from "./pages/requestQ";
-import Services from "./pages/services";
-import Contact from "./pages/contact";
+import { createContext, useContext, useEffect, useState } from "react";
+import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import API from "./endpoint/base";
-import Catalog from "./pages/catalog";
+import { getSession, onSessionChange } from "./auth/customer";
+import Footer from "./components/footer";
+import Home from "./pages/home";
+import Rfq from "./pages/rfq";
+import Sent from "./pages/sent";
+import SignIn from "./pages/signin";
+import SetPassword from "./pages/setpassword";
+import Account from "./pages/account";
+import Track from "./pages/track";
+import { useSeo, SITE } from "./components/seo";
+import { secure } from "./lib/ui";
 
-export const globalContext = createContext();
+export const globalContext = createContext({});
+
+// every page change starts at the top, unless it asked for a section of the home page
+function ScrollManager() {
+  const { pathname, state } = useLocation();
+  useEffect(() => {
+    if (pathname === "/" && state?.scrollTo) {
+      const t = setTimeout(() => document.getElementById(state.scrollTo)?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+      return () => clearTimeout(t);
+    }
+    window.scrollTo(0, 0);
+  }, [pathname, state]);
+  return null;
+}
+
+const HOME_TITLE = "GH Procurement | Sourcing & Logistics in Lagos, Nigeria";
+const HOME_DESCRIPTION =
+  "GH Procurement sources quality suppliers, negotiates contracts and ships anywhere in the world. Request a quote and track your order online. Lagos, Nigeria.";
+
+// The title and search description for every page. Only the home page is for search engines.
+const PAGES = {
+  "/request": ["Request a quote | GH Procurement", "Tell us what you need and we will send a formal quotation within 48 hours."],
+  "/sent": ["Request received | GH Procurement", "Your quote request has been received."],
+  "/signin": ["Sign in | GH Procurement", "Sign in to follow your quote requests and orders."],
+  "/set-password": ["Choose your password | GH Procurement", "Choose a password for your GH Procurement account."],
+  "/account": ["My requests | GH Procurement", "Your quote requests and where each one is now."],
+  "/track": ["Track an order | GH Procurement", "Follow your order from our store to your door."],
+};
+
+function RouteSeo() {
+  const { pathname } = useLocation();
+  const { FAQ, catalogs, metadata } = useContext(globalContext);
+  const home = pathname === "/";
+  const key = Object.keys(PAGES).find((k) => pathname === k || pathname.startsWith(k + "/"));
+  // the home page description is the CMS description (cut to the length search engines show)
+  const cms = (metadata?.metaDescription || "").trim();
+  const homeDescription = cms.length >= 70 ? (cms.length > 160 ? cms.slice(0, 157).replace(/\s+\S*$/, "") + "..." : cms) : HOME_DESCRIPTION;
+  const [title, description] = home ? [HOME_TITLE, homeDescription] : PAGES[key] || [HOME_TITLE, HOME_DESCRIPTION];
+  const jsonLd = [];
+  if (home && metadata) {
+    // business details straight from the CMS, so search results always match the site
+    jsonLd.push({
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "@id": `${SITE}/#organization-details`,
+      name: "GH Procurement",
+      url: `${SITE}/`,
+      telephone: metadata.phone,
+      email: metadata.email,
+      address: { "@type": "PostalAddress", streetAddress: String(metadata.office || "").replace(/\s+/g, " ").trim(), addressCountry: "NG" },
+    });
+  }
+  if (home && FAQ?.length) {
+    jsonLd.push({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.question, acceptedAnswer: { "@type": "Answer", text: f.answer } })),
+    });
+  }
+  if (home && catalogs?.length) {
+    jsonLd.push({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: "GH Procurement catalog",
+      itemListElement: catalogs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: { "@type": "Product", name: c.name, description: c.description, image: secure(c.featured_image), url: `${SITE}/` },
+      })),
+    });
+  }
+  // pages for signed-in customers, and the form steps, are not for search results
+  useSeo({ title, description, noindex: !home, jsonLd });
+  return null;
+}
 
 function App() {
-  const currenYear = new Date().getFullYear();
+  const [data, setData] = useState({ metadata: null, service: null, catalogs: null, FAQ: null, tweets: null });
+  const [session, setSession] = useState(getSession);
 
-  const [metadata, setMetadata] = useState(null);
-  const [service, setServices] = useState(null);
-  const [catalogs, setCatalogs] = useState(null);
-  const [FAQ, setFAQ] = useState(null);
-  const [tweets, setTweets] = useState(null);
-
-  const home = useRef(null);
-  const services = useRef(null);
-  const portfolio = useRef(null);
-  const catalog = useRef(null);
-  const contact = useRef(null);
-  const rfq = useRef(null);
-
-  const section = {
-    1: home,
-    2: services,
-    3: catalog,
-    4: portfolio,
-
-    5: contact,
-    6: rfq,
-  };
-  const scrollToSection = (id) => {
-    section[id].current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "nearest",
-    });
-  };
-  const [dropdown, setDropDown] = useState(false);
-
-  const handledropdown = () => {
-    setDropDown(!dropdown);
-  };
+  useEffect(() => onSessionChange(() => setSession(getSession())), []);
 
   useEffect(() => {
-    const url = API.alldata();
-
-    const fetchAllData = async () => {
+    let alive = true;
+    (async () => {
       try {
-        const res = await fetch(url);
+        const res = await fetch(API.alldata());
         if (!res.ok) throw new Error("server down");
-        const data = await res.json();
-
-        console.log(data);
-
-        setFAQ(data.faq);
-        setMetadata(data.metadata[0]);
-        setCatalogs(data.catalogs);
-        setServices(data.service);
-        setTweets(data.twitter);
+        const d = await res.json();
+        if (!alive) return;
+        setData({ metadata: d.metadata?.[0] ?? null, service: d.service, catalogs: d.catalogs, FAQ: d.faq, tweets: d.twitter });
       } catch (err) {
         console.log(err);
+        if (alive) setData((p) => ({ ...p, failed: true }));
       }
+    })();
+    return () => {
+      alive = false;
     };
-
-    fetchAllData();
   }, []);
 
   return (
-    <>
-      <globalContext.Provider
-        value={{
-          dropdown,
-          handledropdown,
-          scrollToSection,
-          catalogs,
-          metadata,
-          service,
-          FAQ,
-          tweets,
-        }}
-      >
-        {" "}
-        <div className="fixed w-full  top-0 left-0 z-10">
-          <Navbar scrollToSection={scrollToSection} />
+    <globalContext.Provider value={{ ...data, session }}>
+      <HashRouter>
+        <ScrollManager />
+        <RouteSeo />
+        <div className="flex min-h-screen flex-col">
+          <main className="flex-1">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/request" element={<Rfq />} />
+              <Route path="/sent" element={<Sent />} />
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/set-password" element={<SetPassword />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/account/:id" element={<Track />} />
+              <Route path="/track" element={<Track />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+          <Footer />
         </div>
-        <main
-          className="pt-14 sm:pt-16 bg-light/70"
-          onClick={() => setDropDown(false)}
-        >
-          <section ref={home} className="  scroll-mt-15">
-            {" "}
-            <Home />{" "}
-          </section>{" "}
-          <section ref={services} className="scroll-mt-15">
-            {" "}
-            <Services />{" "}
-          </section>
-          <section ref={catalog} className=" scroll-mt-15">
-            <Catalog />{" "}
-          </section>{" "}
-          <section ref={portfolio} className=" scroll-mt-15">
-            {" "}
-            <Portfolio />{" "}
-          </section>
-          <div className="flex flex-col md:flex-row md:px-5">
-            <section ref={contact} className="w-full lg:w-7/12 scroll-mt-15">
-              <Contact />
-            </section>
-            <section ref={rfq} className="w-full lg:w-5/12 scroll-mt-15">
-              <RequestQoute />
-            </section>
-          </div>
-        </main>
-        <footer>
-          <div className="flex items-center justify-center gap-4 bg-peach w-full h-15 text-sm text-gray">
-            {" "}
-            <FaRegCopyright />{" "}
-            <p> 2021 - {currenYear} Gh Procurement. All rights reserved.</p>
-          </div>
-        </footer>
-      </globalContext.Provider>
-    </>
+      </HashRouter>
+    </globalContext.Provider>
   );
 }
 
