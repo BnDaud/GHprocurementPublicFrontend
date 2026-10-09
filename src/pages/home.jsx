@@ -414,9 +414,13 @@ function Feed() {
 
         <div ref={wrap} className="transition-[height] duration-[550ms] ease-[cubic-bezier(.2,.7,.2,1)]" aria-live="polite">
           {tab === "fb" ? (
-            <div key="fb" className={`${cls} rounded-3xl bg-blush p-10 text-center`} style={anim(0)}>
-              <FaFacebook className="mx-auto mb-3 size-10 text-[#1877f2]" aria-hidden="true" />
-              <p className="text-lg font-bold text-muted">Facebook posts are coming soon.</p>
+            <div key="fb" className="grid auto-rows-fr items-stretch gap-5 md:grid-cols-2 lg:grid-cols-3">
+              <a href="https://x.com/GHprocure" target="_blank" rel="noreferrer" className={`${cls} flex min-h-[230px] flex-col justify-center gap-2.5 rounded-[22px] bg-purple p-7 text-white`} style={anim(0)}>
+                <FaFacebook className="size-8 text-peach" aria-hidden="true" />
+                <span className="text-[13px] font-extrabold uppercase tracking-[.08em] text-peach">Facebook</span>
+                <span className="text-2xl font-extrabold leading-tight">Facebook posts are coming soon.</span>
+                <span className="font-extrabold text-peach">Meanwhile, follow us on X →</span>
+              </a>
             </div>
           ) : !tweets ? (
             <div className="flex justify-center py-16"><Spinner className="text-3xl text-purple" /></div>
