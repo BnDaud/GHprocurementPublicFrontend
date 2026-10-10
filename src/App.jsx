@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import API from "./endpoint/base";
 import { getSession, onSessionChange } from "./auth/customer";
 import Footer from "./components/footer";
@@ -34,7 +34,7 @@ const HOME_DESCRIPTION =
 
 // The title and search description for every page. Only the home page is for search engines.
 const PAGES = {
-  "/request": ["Request a quote | GH Procurement", "Tell us what you need and we will send a formal quotation within 48 hours."],
+  "/request": ["Request a quote | GH Procurement", "Tell us what you need and we will send a formal quotation within 48 hours. Sourcing, contracts and logistics from Lagos, Nigeria."],
   "/sent": ["Request received | GH Procurement", "Your quote request has been received."],
   "/signin": ["Sign in | GH Procurement", "Sign in to follow your quote requests and orders."],
   "/set-password": ["Choose your password | GH Procurement", "Choose a password for your GH Procurement account."],
@@ -85,7 +85,7 @@ function RouteSeo() {
     });
   }
   // pages for signed-in customers, and the form steps, are not for search results
-  useSeo({ title, description, noindex: !home, jsonLd });
+  useSeo({ title, description, path: pathname, noindex: !(home || pathname === "/request"), jsonLd });
   return null;
 }
 
@@ -116,7 +116,7 @@ function App() {
 
   return (
     <globalContext.Provider value={{ ...data, session }}>
-      <HashRouter>
+      <BrowserRouter>
         <ScrollManager />
         <RouteSeo />
         <div className="flex min-h-screen flex-col">
@@ -135,7 +135,7 @@ function App() {
           </main>
           <Footer />
         </div>
-      </HashRouter>
+      </BrowserRouter>
     </globalContext.Provider>
   );
 }

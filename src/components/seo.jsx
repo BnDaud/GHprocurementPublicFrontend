@@ -23,7 +23,7 @@ const meta = (attr, name, content) => {
  * Title, description, canonical link, share tags and (optionally) extra
  * structured data for the current page. Private pages pass noindex.
  */
-export function useSeo({ title, description, noindex = false, jsonLd = [] }) {
+export function useSeo({ title, description, path = "/", noindex = false, jsonLd = [] }) {
   const ld = JSON.stringify(jsonLd);
   useEffect(() => {
     document.title = title;
@@ -33,12 +33,12 @@ export function useSeo({ title, description, noindex = false, jsonLd = [] }) {
     meta("property", "og:description", description);
     meta("name", "twitter:title", title);
     meta("name", "twitter:description", description);
-    // pages other than the home page live behind a # address, so they all point back to the home page
+    // a page points to its own address; private pages (marked noindex) point to the home page
     upsert('link[rel="canonical"]', () => {
       const l = document.createElement("link");
       l.setAttribute("rel", "canonical");
       return l;
-    }).setAttribute("href", `${SITE}/`);
+    }).setAttribute("href", `${SITE}${noindex ? "/" : path}`);
 
     const scripts = JSON.parse(ld).map((obj) => {
       const s = document.createElement("script");
@@ -49,5 +49,5 @@ export function useSeo({ title, description, noindex = false, jsonLd = [] }) {
       return s;
     });
     return () => scripts.forEach((s) => s.remove());
-  }, [title, description, noindex, ld]);
+  }, [title, description, path, noindex, ld]);
 }
