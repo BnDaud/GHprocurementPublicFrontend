@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import Spinner from "../components/spinner";
-import { api, errorText, getSession, saveSession } from "../auth/customer";
+import { api, errorText, getSession, saveSession, takeIdleNote } from "../auth/customer";
 import API from "../endpoint/base";
 import air1 from "../images/air1.jpg";
 import logoWhite from "../images/logo-white.png";
@@ -12,7 +12,8 @@ import { btnPurple, inputClass, labelClass } from "../lib/ui";
 export default function SignIn() {
   const navigate = useNavigate();
   const where = useLocation().state;
-  const note = where?.note || "";
+  const [idleNote] = useState(takeIdleNote);
+  const note = where?.note || idleNote;
   const [mode, setMode] = useState(where?.mode === "forgot" ? "forgot" : "signin"); // signin | forgot | sent
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
