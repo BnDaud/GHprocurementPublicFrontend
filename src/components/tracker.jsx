@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { LuCheck, LuMail, LuX } from "react-icons/lu";
+import { LuCheck, LuDownload, LuMail, LuX } from "react-icons/lu";
 import Spinner from "./spinner";
+import logoWhite from "../images/logo-white.png";
+import { emailHtmlToPdf } from "../lib/pdf";
 import { dateTime, dayMonth } from "../lib/ui";
 
 // the 8 steps, from the server's `stages`
@@ -63,9 +65,21 @@ export function Stepper({ stages, step, total }) {
 
 // The email that went with one update, shown right here (so no one has to dig through their inbox).
 // `load()` returns the email's HTML text, or null when it cannot be fetched.
-function EmailDialog({ update, load, onClose }) {
+function EmailDialog({ update, load, reference, onClose }) {
   const [html, setHtml] = useState(null);
   const [failed, setFailed] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const download = async () => {
+    if (!html || saving) return;
+    setSaving(true);
+    try {
+      const slug = (update.headline || "update").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+      await emailHtmlToPdf(html, { filename: `${reference || "email"}-${slug}.pdf`, mark: logoWhite });
+    } catch {
+      setFailed(true);
+    }
+    setSaving(false);
+  };
   useEffect(() => {
     let live = true;
     load(update).then((t) => live && (t ? setHtml(t) : setFailed(true)));
@@ -87,7 +101,12 @@ function EmailDialog({ update, load, onClose }) {
             <p className="text-[13px] font-semibold text-muted">The email we sent you</p>
             <p className="truncate text-[17px] font-extrabold text-purple">{update.headline}</p>
           </div>
-          <button type="button" aria-label="Close" onClick={onClose} className="flex size-11 flex-none cursor-pointer items-center justify-center rounded-xl text-xl text-muted hover:bg-lilac"><LuX /></button>
+          <div className="flex flex-none items-center gap-2">
+            <button type="button" onClick={download} disabled={!html || saving} className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#cdbfd4] px-4 text-[14px] font-bold text-purple hover:bg-lilac disabled:cursor-default disabled:opacity-50">
+              {saving ? <Spinner className="text-lg" /> : <LuDownload aria-hidden="true" />} PDF
+            </button>
+            <button type="button" aria-label="Close" onClick={onClose} className="flex size-11 cursor-pointer items-center justify-center rounded-xl text-xl text-muted hover:bg-lilac"><LuX /></button>
+          </div>
         </div>
         <div className="min-h-0 flex-1 bg-[#efecf3]">
           {failed ? (
@@ -104,7 +123,7 @@ function EmailDialog({ update, load, onClose }) {
   );
 }
 
-export function UpdatesFeed({ updates, loadEmail }) {
+export function UpdatesFeed({ updates, loadEmail, reference }) {
   const [open, setOpen] = useState(null);
   return (
     <section className="rounded-[28px] border border-line bg-white px-6 py-8 sm:px-10" aria-labelledby="feed-title">
@@ -133,7 +152,7 @@ export function UpdatesFeed({ updates, loadEmail }) {
           </li>
         ))}
       </ol>
-      {open && <EmailDialog update={open} load={loadEmail} onClose={() => setOpen(null)} />}
+      {open && <EmailDialog update={open} load={loadEmail} reference={reference} onClose={() => setOpen(null)} />}
     </section>
   );
 }
