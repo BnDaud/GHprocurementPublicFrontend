@@ -14,6 +14,8 @@ const API = {
     requests: () => `${BASEURL}/customer/requests/`,
     request: (id) => `${BASEURL}/customer/requests/${id}/`,
     track: () => `${BASEURL}/customer/track/`,
+    updateEmail: (id, update) => `${BASEURL}/customer/requests/${id}/updates/${update}/email/`,
+    trackEmail: () => `${BASEURL}/customer/track/email/`,
   },
 };
 

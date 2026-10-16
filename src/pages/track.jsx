@@ -1,10 +1,10 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
 import { globalContext } from "../App";
 import Header from "../components/header";
 import Spinner from "../components/spinner";
 import { RouteCard, Stepper, UpdatesFeed } from "../components/tracker";
-import { api, errorText, justSignedOut } from "../auth/customer";
+import { api, errorText, getSession, justSignedOut } from "../auth/customer";
 import API from "../endpoint/base";
 import air1 from "../images/air1.jpg";
 import { btnPurple, inputClass, labelClass, longDate } from "../lib/ui";
@@ -95,6 +95,22 @@ function TrackView() {
     };
   }, [id, ref, email, session]);
 
+  // the email behind one update, as HTML text (signed in: by order; guest: by reference and email)
+  const loadEmail = useCallback(
+    async (u) => {
+      try {
+        const s = getSession();
+        const res = id
+          ? await fetch(API.customer.updateEmail(id, u.id), { headers: s ? { Authorization: `Bearer ${s.token}` } : {} })
+          : await fetch(API.customer.trackEmail(), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reference: ref, email, update: u.id }) });
+        return res.ok ? await res.text() : null;
+      } catch {
+        return null;
+      }
+    },
+    [id, ref, email]
+  );
+
   if (id && !session) return justSignedOut() ? <Navigate to="/" replace /> : <Navigate to="/signin" replace state={{ from: here.pathname }} />;
   if (!id && (!ref || !email || error)) return <GuestForm initial={{ ref, email }} error={error} />;
 
@@ -127,7 +143,7 @@ function TrackView() {
       <main className="relative mx-auto -mt-24 max-w-[1280px] px-5 pb-20 sm:px-10">
         <Stepper stages={data.stages} step={data.step} total={data.steps} />
         <div className="mt-7 flex flex-wrap items-start gap-7">
-          <div className="min-w-0 flex-[1_1_600px]"><UpdatesFeed updates={data.updates} /></div>
+          <div className="min-w-0 flex-[1_1_600px]"><UpdatesFeed updates={data.updates} loadEmail={loadEmail} /></div>
           <aside className="flex min-w-0 flex-[1_1_340px] flex-col gap-5">
             <RouteCard step={data.step} total={data.steps} address={data.delivery_address} estimate={data.estimated_delivery ? longDate(data.estimated_delivery) : ""} />
             <section className="rounded-[28px] border border-line bg-white p-7">

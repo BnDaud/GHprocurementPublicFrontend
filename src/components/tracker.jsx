@@ -1,4 +1,7 @@
-import { LuCheck } from "react-icons/lu";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { LuCheck, LuMail, LuX } from "react-icons/lu";
+import Spinner from "./spinner";
 import { dateTime, dayMonth } from "../lib/ui";
 
 // the 8 steps, from the server's `stages`
@@ -58,7 +61,51 @@ export function Stepper({ stages, step, total }) {
   );
 }
 
-export function UpdatesFeed({ updates }) {
+// The email that went with one update, shown right here (so no one has to dig through their inbox).
+// `load()` returns the email's HTML text, or null when it cannot be fetched.
+function EmailDialog({ update, load, onClose }) {
+  const [html, setHtml] = useState(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    let live = true;
+    load(update).then((t) => live && (t ? setHtml(t) : setFailed(true)));
+    return () => {
+      live = false;
+    };
+  }, [update, load]);
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/55 p-0 sm:items-center sm:p-5" onClick={onClose}>
+      <div role="dialog" aria-modal="true" aria-label="The email we sent you" onClick={(e) => e.stopPropagation()}
+        className="flex h-[92vh] w-full max-w-[720px] flex-col overflow-hidden rounded-t-[24px] bg-white shadow-2xl sm:h-[88vh] sm:rounded-[24px]">
+        <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-3.5">
+          <div className="min-w-0">
+            <p className="text-[13px] font-semibold text-muted">The email we sent you</p>
+            <p className="truncate text-[17px] font-extrabold text-purple">{update.headline}</p>
+          </div>
+          <button type="button" aria-label="Close" onClick={onClose} className="flex size-11 flex-none cursor-pointer items-center justify-center rounded-xl text-xl text-muted hover:bg-lilac"><LuX /></button>
+        </div>
+        <div className="min-h-0 flex-1 bg-[#efecf3]">
+          {failed ? (
+            <p role="alert" className="p-6 text-[15px] font-semibold text-[#8a1f15]">We could not load that email. Please try again in a moment.</p>
+          ) : html === null ? (
+            <div className="flex justify-center py-16"><Spinner className="text-3xl" /></div>
+          ) : (
+            <iframe title="Email" sandbox="" srcDoc={html} className="size-full border-0" />
+          )}
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+export function UpdatesFeed({ updates, loadEmail }) {
+  const [open, setOpen] = useState(null);
   return (
     <section className="rounded-[28px] border border-line bg-white px-6 py-8 sm:px-10" aria-labelledby="feed-title">
       <h2 id="feed-title" className="text-[26px] font-extrabold text-purple">Updates</h2>
@@ -77,10 +124,16 @@ export function UpdatesFeed({ updates }) {
               <p className="mt-1 text-[19px] font-extrabold break-words">{u.headline}</p>
               {u.details && <p className="mt-1.5 whitespace-pre-line text-[15.5px] leading-relaxed text-[#4b3d54] break-words">{u.details}</p>}
               {u.location && <p className="mt-2 text-[13.5px] text-muted">Location: {u.location}</p>}
+              {loadEmail && (
+                <button type="button" onClick={() => setOpen(u)} className="mt-3 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#cdbfd4] px-4 text-[14px] font-bold text-purple hover:bg-lilac">
+                  <LuMail aria-hidden="true" /> See the email we sent
+                </button>
+              )}
             </div>
           </li>
         ))}
       </ol>
+      {open && <EmailDialog update={open} load={loadEmail} onClose={() => setOpen(null)} />}
     </section>
   );
 }

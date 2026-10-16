@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { LuArrowRight } from "react-icons/lu";
+import { LuArrowRight, LuImage, LuPlus, LuTrash2, LuX } from "react-icons/lu";
 import Header from "../components/header";
 import Spinner from "../components/spinner";
 import { globalContext } from "../App";
@@ -12,49 +12,68 @@ import air2 from "../images/air2.jpg";
 import { btnPurple, inputClass, labelClass } from "../lib/ui";
 
 const MAX_MB = 10;
+const MAX_ITEMS = 10;
+const blank = (description = "") => ({ description, quantity: "1", file: null });
+
+// shrink a photo in the browser first (about 1200 px, JPEG), so a phone picture uploads in kilobytes, not megabytes
+async function shrink(file) {
+  try {
+    const bmp = await createImageBitmap(file);
+    const k = Math.min(1, 1200 / Math.max(bmp.width, bmp.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bmp.width * k);
+    canvas.height = Math.round(bmp.height * k);
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise((r) => canvas.toBlob(r, "image/jpeg", 0.8));
+    return blob && blob.size < file.size ? new File([blob], file.name.replace(/\.\w+$/, "") + ".jpg", { type: "image/jpeg" }) : file;
+  } catch {
+    return file; // the server shrinks it too
+  }
+}
+
+function Thumb({ file }) {
+  const url = useMemo(() => URL.createObjectURL(file), [file]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
+  return <img src={url} alt="" className="size-full object-cover" />;
+}
 
 export default function Rfq() {
   const { session } = useContext(globalContext);
   const prefill = useLocation().state?.item || "";
   const navigate = useNavigate();
-  const fileRef = useRef(null);
   const formRef = useRef(null);
   const [form, setForm] = useState({
     name: session?.user?.name || "",
     company: session?.user?.company || "",
     email: session?.user?.email || "",
     phone: "",
-    item: prefill,
+    item: prefill.split("\n").slice(1).join("\n").trim(), // a note: anything beyond the first line
   });
-  const [file, setFile] = useState(null);
+  const [rows, setRows] = useState([blank(prefill.split("\n")[0].slice(0, 200))]);
   const [agree, setAgree] = useState(false);
   const [errors, setErrors] = useState({});
   const [failure, setFailure] = useState("");
   const [busy, setBusy] = useState(false);
-
-  const preview = useMemo(() => (file ? URL.createObjectURL(file) : ""), [file]);
-  useEffect(() => () => preview && URL.revokeObjectURL(preview), [preview]);
 
   const set = (k) => (e) => {
     setForm((f) => ({ ...f, [k]: e.target.value }));
     setErrors((x) => ({ ...x, [k]: undefined }));
   };
 
-  const pick = (e) => {
+  const setRow = (i, patch) => {
+    setRows((r) => r.map((x, k) => (k === i ? { ...x, ...patch } : x)));
+    setErrors((x) => ({ ...x, items: undefined, file: undefined }));
+  };
+  const pickPicture = async (i, e) => {
     const f = e.target.files?.[0];
-    setErrors((x) => ({ ...x, file: undefined }));
-    if (!f) return setFile(null);
-    if (!f.type.startsWith("image/")) {
-      setErrors((x) => ({ ...x, file: "Choose a picture (JPG or PNG)." }));
-      e.target.value = "";
-      return setFile(null);
-    }
-    if (f.size > MAX_MB * 1024 * 1024) {
-      setErrors((x) => ({ ...x, file: `The picture must be under ${MAX_MB} MB.` }));
-      e.target.value = "";
-      return setFile(null);
-    }
-    setFile(f);
+    e.target.value = "";
+    if (!f) return;
+    if (!f.type.startsWith("image/")) return setErrors((x) => ({ ...x, file: "Choose a picture (JPG or PNG)." }));
+    if (f.size > MAX_MB * 1024 * 1024) return setErrors((x) => ({ ...x, file: `Each picture must be under ${MAX_MB} MB.` }));
+    setRow(i, { file: await shrink(f) });
   };
 
   const validate = () => {
@@ -63,7 +82,9 @@ export default function Rfq() {
     if (!form.company.trim()) x.company = "Enter your company.";
     if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) x.email = "Enter a valid email address.";
     if (form.phone.replace(/\D/g, "").length < 6) x.phone = "Enter your phone number.";
-    if (!form.item.trim()) x.item = "Tell us what you need.";
+    const used = rows.filter((r) => r.description.trim());
+    if (used.length === 0) x.items = "Add at least one item.";
+    else if (used.some((r) => !(Number(String(r.quantity).replace(/,/g, "")) > 0))) x.items = "Give each item a quantity.";
     if (!agree) x.agree = "Please agree so we can reply and create your account.";
     return x;
   };
@@ -85,9 +106,13 @@ export default function Rfq() {
     body.append("company", form.company.trim());
     body.append("email", form.email.trim());
     body.append("phone", form.phone);
-    body.append("item", form.item.trim());
+    const used = rows.filter((r) => r.description.trim());
+    const pics = used.filter((r) => r.file);
+    let next = 0;
+    body.append("items_json", JSON.stringify(used.map((r) => ({ description: r.description.trim(), quantity: String(r.quantity).replace(/,/g, ""), image: r.file ? next++ : null }))));
+    pics.forEach((r) => body.append("item_images", r.file));
+    body.append("item", form.item.trim()); // the note
     body.append("consent", "true"); // the box above is ticked (the page will not send without it)
-    if (file) body.append("file", file);
     const res = await api(API.sendRFQ(), { method: "POST", body });
     setBusy(false);
     if (!res.ok) {
@@ -98,7 +123,7 @@ export default function Rfq() {
       focusFirst();
       return;
     }
-    navigate("/sent", { state: { reference: res.data.reference, email: res.data.email, newAccount: res.data.new_account, id: res.data.id, name: form.name.trim(), company: form.company.trim(), item: form.item.trim() }, replace: true });
+    navigate("/sent", { state: { reference: res.data.reference, email: res.data.email, newAccount: res.data.new_account, id: res.data.id, name: form.name.trim(), company: form.company.trim(), item: rows.filter((r) => r.description.trim()).map((r) => `${r.quantity} x ${r.description.trim()}`).join("\n") }, replace: true });
   };
 
   const err = (k) => errors[k] && <span role="alert" className="text-[13px] font-semibold text-[#b42318]">{errors[k]}</span>;
@@ -147,17 +172,37 @@ export default function Rfq() {
                 {err("phone")}
               </div>
             </div>
-            <label className={labelClass}>What do you need?
-              <textarea rows={5} aria-invalid={!!errors.item} className={`${inputClass} !h-auto py-3.5 leading-normal ${bad("item")}`} value={form.item} onChange={set("item")} placeholder="Items, quantities, specifications, delivery address…" />{err("item")}</label>
-            <div className={labelClass}>
-              <label htmlFor="rfq-file">Picture <span className="font-medium text-muted">(optional)</span></label>
-              <div className="flex min-h-[68px] flex-wrap items-center gap-3.5 rounded-[14px] border-2 border-dashed border-[#cdbfd4] bg-blush px-4 py-3 text-sm font-medium text-[#4b3d54]">
-                <input id="rfq-file" ref={fileRef} type="file" accept="image/*" onChange={pick} className="text-sm" />
-                JPG or PNG, up to {MAX_MB} MB
-              </div>
+            <fieldset className="flex flex-col gap-3">
+              <legend className="mb-1 text-[15px] font-bold">What do you need?</legend>
+              {rows.map((r, i) => (
+                <div key={i} className="flex items-center gap-2.5">
+                  <span className="relative flex-none">
+                    <label className="flex size-[52px] cursor-pointer items-center justify-center overflow-hidden rounded-[14px] border-2 border-dashed border-[#cdbfd4] bg-blush text-xl text-purple hover:bg-lilac focus-within:outline focus-within:outline-2 focus-within:outline-purple" title={r.file ? "Change picture" : "Add a picture (optional)"}>
+                      {r.file ? <Thumb file={r.file} /> : <LuImage aria-hidden="true" />}
+                      <input type="file" accept="image/*" className="sr-only" aria-label={`Item ${i + 1} picture (optional)`} onChange={(e) => pickPicture(i, e)} />
+                    </label>
+                    {r.file && (
+                      <button type="button" aria-label={`Remove item ${i + 1} picture`} onClick={() => setRow(i, { file: null })} className="absolute -right-1.5 -top-1.5 flex size-5 cursor-pointer items-center justify-center rounded-full bg-white text-[11px] text-[#a3261a] shadow ring-1 ring-line"><LuX /></button>
+                    )}
+                  </span>
+                  <input aria-label={`Item ${i + 1} description`} aria-invalid={!!errors.items} className={`${inputClass} min-w-0 flex-1 ${bad("items")}`} value={r.description} maxLength={200} onChange={(e) => setRow(i, { description: e.target.value })} placeholder={i === 0 ? "Item, size, model, colour…" : "Another item"} />
+                  <input aria-label={`Item ${i + 1} quantity`} inputMode="decimal" className={`${inputClass} !w-20 flex-none text-center ${bad("items")}`} value={r.quantity} onChange={(e) => setRow(i, { quantity: e.target.value })} placeholder="Qty" />
+                  {rows.length > 1 && (
+                    <button type="button" aria-label={`Remove item ${i + 1}`} onClick={() => setRows((x) => x.filter((_, k) => k !== i))} className="flex size-11 flex-none cursor-pointer items-center justify-center rounded-xl text-lg text-[#a3261a] hover:bg-[#fdeceb]"><LuTrash2 /></button>
+                  )}
+                </div>
+              ))}
+              {err("items")}
               {err("file")}
-              {preview && <img src={preview} alt="Preview" className="mt-1 size-28 rounded-xl border border-line object-cover" />}
-            </div>
+              <div className="flex flex-wrap items-center gap-3">
+                {rows.length < MAX_ITEMS && (
+                  <button type="button" onClick={() => setRows((x) => [...x, blank()])} className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#cdbfd4] px-4 text-sm font-bold text-purple hover:bg-lilac"><LuPlus /> Add another item</button>
+                )}
+                <span className="text-[12.5px] font-medium text-muted">A picture for each item is optional. JPG or PNG.</span>
+              </div>
+            </fieldset>
+            <label className={labelClass}>Anything else we should know? <span className="font-medium text-muted">(optional)</span>
+              <textarea rows={3} className={`${inputClass} !h-auto py-3.5 leading-normal`} value={form.item} onChange={set("item")} placeholder="Specifications, delivery address, deadline…" /></label>
             <label className={`flex items-start gap-3 rounded-xl text-sm leading-normal text-[#4b3d54] ${errors.agree ? "bg-[#fdeceb] p-3 ring-1 ring-[#b42318]/40" : ""}`}>
               <input type="checkbox" aria-invalid={!!errors.agree} checked={agree} onChange={(e) => { setAgree(e.target.checked); setErrors((x) => ({ ...x, agree: undefined })); }} className="mt-0.5 size-5 accent-purple" />
               <span>I agree that GH Procurement may use these details to reply to this request and to create my account.{errors.agree && <span role="alert" className="mt-1 block text-[13px] font-semibold text-[#b42318]">{errors.agree}</span>}</span>
