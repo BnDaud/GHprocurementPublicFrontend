@@ -8,15 +8,12 @@ import Spinner from "../components/spinner";
 import truck from "../images/truck1.jpg";
 import air1 from "../images/air1.jpg";
 import air2 from "../images/air2.jpg";
-import shipPort from "../images/ship-port.jpg";
-import shipSea from "../images/ship-sea.jpg";
 import logoPurple from "../images/logo-purple.png";
 import { btnPeach, btnPurple, btnGlass, inputClass, eyebrow, secure, countWord, telHref, money } from "../lib/ui";
 
 const SLIDES = [
   { src: truck, label: "Road freight" },
   { src: air1, label: "Air freight" },
-  { src: shipPort, label: "Sea freight", position: "center 38%" },
   { src: air2, label: "Global delivery" },
 ];
 
@@ -72,7 +69,7 @@ function Hero() {
     <div className="relative bg-aubergine text-white">
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         {SLIDES.map((s, i) => (
-          <img key={s.label} src={s.src} alt="" style={s.position ? { objectPosition: s.position } : undefined} className={`absolute inset-0 size-full object-cover transition-opacity duration-[1400ms] ${i === slide ? "opacity-100" : "opacity-0"}`} />
+          <img key={s.label} src={s.src} alt="" className={`absolute inset-0 size-full object-cover transition-opacity duration-[1400ms] ${i === slide ? "opacity-100" : "opacity-0"}`} />
         ))}
         <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(28,6,36,.94)_0%,rgba(46,10,58,.82)_42%,rgba(46,10,58,.25)_100%)]" />
       </div>
@@ -329,22 +326,12 @@ function Promise() {
             <Link to="/track" className={btnGlass}>Track an order</Link>
           </div>
         </div>
-        <div className="grid min-h-[420px] min-w-0 flex-[1_1_340px] grid-rows-2 gap-4 text-white">
-          <div className="relative overflow-hidden rounded-[28px]">
-            <img src={air2} alt="" loading="lazy" className="absolute inset-0 size-full object-cover" />
-            <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(28,6,36,.82)_0%,rgba(28,6,36,0)_60%)]" />
-            <div className="absolute inset-x-6 bottom-5">
-              <p className="text-[13px] font-extrabold uppercase tracking-[.08em] text-peach">Air freight</p>
-              <p className="mt-0.5 text-lg font-extrabold leading-snug">Lagos, the UK, and anywhere else you ship to.</p>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-[28px]">
-            <img src={shipSea} alt="" loading="lazy" style={{ objectPosition: "center 100%" }} className="absolute inset-0 size-full object-cover" />
-            <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(28,6,36,.82)_0%,rgba(28,6,36,0)_60%)]" />
-            <div className="absolute inset-x-6 bottom-5">
-              <p className="text-[13px] font-extrabold uppercase tracking-[.08em] text-peach">Sea freight</p>
-              <p className="mt-0.5 text-lg font-extrabold leading-snug">Full containers and bulk cargo, port to port and door to door.</p>
-            </div>
+        <div className="relative min-h-[380px] min-w-0 flex-[1_1_340px] overflow-hidden rounded-[32px] text-white">
+          <img src={air2} alt="" className="absolute inset-0 size-full object-cover" />
+          <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(28,6,36,.78)_0%,rgba(28,6,36,0)_55%)]" />
+          <div className="absolute inset-x-7 bottom-6">
+            <p className="text-[13px] font-extrabold uppercase tracking-[.08em] text-peach">Air freight</p>
+            <p className="mt-1 text-[22px] font-extrabold leading-snug">Lagos, the UK, and anywhere else you ship to.</p>
           </div>
         </div>
       </div>

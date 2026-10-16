@@ -6,13 +6,13 @@ import Spinner from "../components/spinner";
 import { RouteCard, Stepper, UpdatesFeed } from "../components/tracker";
 import { api, errorText, justSignedOut } from "../auth/customer";
 import API from "../endpoint/base";
-import shipPort from "../images/ship-port.jpg";
+import air1 from "../images/air1.jpg";
 import { btnPurple, inputClass, labelClass, longDate } from "../lib/ui";
 
 function Banner({ children }) {
   return (
     <section className="relative overflow-hidden bg-aubergine pb-36 text-white">
-      <img src={shipPort} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" style={{ objectPosition: "center 55%" }} />
+      <img src={air1} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" style={{ objectPosition: "center 55%" }} />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(28,6,36,.94)_0%,rgba(46,10,58,.78)_55%,rgba(46,10,58,.3)_100%)]" aria-hidden="true" />
       <div className="relative">
         <Header overlay />
