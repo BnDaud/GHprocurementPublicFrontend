@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { LuEye, LuEyeOff } from "react-icons/lu";
 import Spinner from "../components/spinner";
 import { api, errorText, getSession, saveSession } from "../auth/customer";
 import API from "../endpoint/base";
 import shipSea from "../images/ship-sea.jpg";
 import logoWhite from "../images/logo-white.png";
+import logoPurple from "../images/logo-purple.png";
 import { btnPurple, inputClass, labelClass } from "../lib/ui";
 
 export default function SignIn() {
@@ -59,8 +61,10 @@ export default function SignIn() {
         </div>
       </section>
 
-      <main className="flex min-w-0 flex-[1_1_520px] items-center justify-center px-5 py-12 sm:px-14">
-        <div className="w-full max-w-[440px]">
+      <main className="relative flex min-w-0 flex-[1_1_520px] items-center justify-center overflow-hidden px-5 py-12 sm:px-14">
+        {/* the company logo as a faint, slanted watermark (same as the CMS) */}
+        <img src={logoPurple} alt="" aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 w-[min(80%,560px)] -translate-x-1/2 -translate-y-1/2 -rotate-[22deg] select-none opacity-[0.05]" />
+        <div className="relative z-10 w-full max-w-[440px]">
           {note && <p role="status" className="mb-6 rounded-xl border border-[#bfe0cb] bg-[#e6f2ea] px-4 py-3 text-sm font-semibold text-[#12633a]">{note}</p>}
 
           {mode === "signin" && (
@@ -72,8 +76,8 @@ export default function SignIn() {
                 <div className={labelClass}>
                   <label htmlFor="signin-password">Password</label>
                   <div className="relative">
-                    <input id="signin-password" type={show ? "text" : "password"} className={`${inputClass} !pr-20`} value={password} onChange={(e) => { setPassword(e.target.value); setError(""); }} autoComplete="current-password" aria-invalid={!!error} />
-                    <button type="button" onClick={() => setShow((v) => !v)} aria-pressed={show} className="absolute right-2 top-1/2 flex h-10 -translate-y-1/2 items-center rounded-lg px-3 text-[13px] font-extrabold text-purple hover:bg-lilac">{show ? "Hide" : "Show"}</button>
+                    <input id="signin-password" type={show ? "text" : "password"} className={`${inputClass} !pr-14`} value={password} onChange={(e) => { setPassword(e.target.value); setError(""); }} autoComplete="current-password" aria-invalid={!!error} />
+                    <button type="button" onClick={() => setShow((v) => !v)} aria-pressed={show} aria-label={show ? "Hide password" : "Show password"} className="absolute right-1.5 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg text-[22px] text-muted hover:bg-lilac hover:text-purple">{show ? <LuEyeOff aria-hidden="true" /> : <LuEye aria-hidden="true" />}</button>
                   </div>
                 </div>
                 {error && <p role="alert" className="text-sm font-semibold text-[#b42318]">{error}</p>}

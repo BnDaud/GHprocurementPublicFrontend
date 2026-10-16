@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { LuCheck } from "react-icons/lu";
+import { LuEye, LuEyeOff } from "react-icons/lu";
 import Spinner from "../components/spinner";
 import { api, errorText, saveSession } from "../auth/customer";
 import API from "../endpoint/base";
 import shipSea from "../images/ship-sea.jpg";
 import logoWhite from "../images/logo-white.png";
+import logoPurple from "../images/logo-purple.png";
 import { btnPurple, inputClass, labelClass } from "../lib/ui";
 
 export default function SetPassword() {
@@ -49,8 +51,10 @@ export default function SetPassword() {
         <Link to="/" className="relative" aria-label="GH Procurement, home"><img src={logoWhite} alt="Gadgets Home" className="h-11 w-auto" /></Link>
         <h2 className="relative max-w-[520px] text-[38px] font-extrabold leading-[1.05] tracking-[-.03em] sm:text-[52px]">Welcome. One last step.</h2>
       </section>
-      <main className="flex min-w-0 flex-[1_1_520px] items-center justify-center px-5 py-12 sm:px-14">
-        <div className="w-full max-w-[440px]">
+      <main className="relative flex min-w-0 flex-[1_1_520px] items-center justify-center overflow-hidden px-5 py-12 sm:px-14">
+        {/* the company logo as a faint, slanted watermark (same as the CMS) */}
+        <img src={logoPurple} alt="" aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 w-[min(80%,560px)] -translate-x-1/2 -translate-y-1/2 -rotate-[22deg] select-none opacity-[0.05]" />
+        <div className="relative z-10 w-full max-w-[440px]">
           {expired ? (
             <>
               <h1 className="text-[34px] font-extrabold tracking-[-.02em] text-purple">This link has expired</h1>
@@ -62,8 +66,20 @@ export default function SetPassword() {
               <h1 className="text-[34px] font-extrabold tracking-[-.02em] text-purple">Choose your password</h1>
               <p className="mb-6 mt-2 text-base text-[#4b3d54]">You will use it to sign in and follow your requests.</p>
               <form onSubmit={submit} noValidate className="flex flex-col gap-[18px]">
-                <label className={labelClass}>New password<input type={show ? "text" : "password"} className={inputClass} value={pw} onChange={(e) => { setPw(e.target.value); setError(""); }} autoComplete="new-password" autoFocus /></label>
-                <label className={labelClass}>Confirm password<input type={show ? "text" : "password"} className={inputClass} value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" /></label>
+                <div className={labelClass}>
+                  <label htmlFor="new-pw">New password</label>
+                  <div className="relative">
+                    <input id="new-pw" type={show ? "text" : "password"} className={`${inputClass} !pr-14`} value={pw} onChange={(e) => { setPw(e.target.value); setError(""); }} autoComplete="new-password" autoFocus />
+                    <button type="button" onClick={() => setShow((v) => !v)} aria-pressed={show} aria-label={show ? "Hide passwords" : "Show passwords"} className="absolute right-1.5 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg text-[22px] text-muted hover:bg-lilac hover:text-purple">{show ? <LuEyeOff aria-hidden="true" /> : <LuEye aria-hidden="true" />}</button>
+                  </div>
+                </div>
+                <div className={labelClass}>
+                  <label htmlFor="confirm-pw">Confirm password</label>
+                  <div className="relative">
+                    <input id="confirm-pw" type={show ? "text" : "password"} className={`${inputClass} !pr-14`} value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" />
+                    <button type="button" onClick={() => setShow((v) => !v)} aria-pressed={show} aria-label={show ? "Hide passwords" : "Show passwords"} className="absolute right-1.5 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg text-[22px] text-muted hover:bg-lilac hover:text-purple">{show ? <LuEyeOff aria-hidden="true" /> : <LuEye aria-hidden="true" />}</button>
+                  </div>
+                </div>
                 <ul aria-label="Password rules" className="flex flex-col gap-1.5 text-[13.5px] text-[#4b3d54]">
                   {rules.map(([t, done]) => (
                     <li key={t} data-ok={done} className="flex items-center gap-2">
@@ -71,7 +87,6 @@ export default function SetPassword() {
                     </li>
                   ))}
                 </ul>
-                <button type="button" onClick={() => setShow((s) => !s)} className="self-start text-[13.5px] font-extrabold text-purple underline">{show ? "Hide passwords" : "Show passwords"}</button>
                 {error && <p role="alert" className="text-sm font-semibold text-[#b42318]">{error}</p>}
                 <button type="submit" disabled={!ok || busy} className={`${btnPurple} min-h-14 text-[17px]`}>{busy ? <Spinner className="text-xl" /> : "Save and continue"}</button>
               </form>
