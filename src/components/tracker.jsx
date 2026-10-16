@@ -95,7 +95,7 @@ function EmailDialog({ update, load, onClose }) {
           ) : html === null ? (
             <div className="flex justify-center py-16"><Spinner className="text-3xl" /></div>
           ) : (
-            <iframe title="Email" sandbox="" srcDoc={html} className="size-full border-0" />
+            <iframe title="Email" sandbox="allow-top-navigation-by-user-activation" srcDoc={html.replace(/<head([^>]*)>/i, '<head$1><base target="_top">')} className="size-full border-0" />
           )}
         </div>
       </div>
