@@ -4,7 +4,7 @@ import { LuCheck } from "react-icons/lu";
 import Spinner from "../components/spinner";
 import { api, errorText, saveSession } from "../auth/customer";
 import API from "../endpoint/base";
-import air1 from "../images/air1.jpg";
+import shipSea from "../images/ship-sea.jpg";
 import logoWhite from "../images/logo-white.png";
 import { btnPurple, inputClass, labelClass } from "../lib/ui";
 
@@ -44,7 +44,7 @@ export default function SetPassword() {
   return (
     <div className="flex min-h-[calc(100vh-220px)] flex-wrap bg-cream lg:min-h-[calc(125vh-125px)]">
       <section className="relative flex min-h-[260px] min-w-0 flex-[1_1_520px] flex-col justify-between overflow-hidden bg-aubergine p-8 text-white sm:p-14 lg:min-h-[calc(125vh-125px)]">
-        <img src={air1} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" />
+        <img src={shipSea} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" />
         <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(28,6,36,.9)_0%,rgba(28,6,36,.25)_55%,rgba(28,6,36,.5)_100%)]" aria-hidden="true" />
         <Link to="/" className="relative" aria-label="GH Procurement, home"><img src={logoWhite} alt="Gadgets Home" className="h-11 w-auto" /></Link>
         <h2 className="relative max-w-[520px] text-[38px] font-extrabold leading-[1.05] tracking-[-.03em] sm:text-[52px]">Welcome. One last step.</h2>
