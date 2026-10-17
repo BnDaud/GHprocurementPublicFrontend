@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa";
-import { LuArrowRight, LuSearch, LuFileText, LuTruck, LuMapPin, LuX } from "react-icons/lu";
+import { LuArrowRight, LuCheck, LuPlus, LuSearch, LuFileText, LuTruck, LuMapPin, LuX } from "react-icons/lu";
 import { globalContext } from "../App";
 import Header from "../components/header";
 import Spinner from "../components/spinner";
@@ -219,7 +219,21 @@ function HowItWorks() {
   );
 }
 
-function ProductDialog({ item, currency, onClose }) {
+// the products picked for a request (kept for this visit, so a refresh does not lose them)
+const PICKED = "gh_picked_products";
+const readPicked = () => {
+  try {
+    return JSON.parse(sessionStorage.getItem(PICKED) || "[]");
+  } catch {
+    return [];
+  }
+};
+// what the request form needs to start with a product already on the list
+const asRequestItem = (c) => ({ name: c.name, quantity: Number(c.min_quantity) > 0 ? String(c.min_quantity) : "1", min: Number(c.min_quantity) || 0, thumb: secure(c.featured_image) });
+
+function ProductDialog({ item, currency, picked, onToggle, onClose }) {
+  const navigate = useNavigate();
+  const added = picked.some((p) => p.id === item.id);
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -240,9 +254,14 @@ function ProductDialog({ item, currency, onClose }) {
           {money(item.price, currency) && <p className="mt-3 text-[28px] font-extrabold text-purple">{money(item.price, currency)}</p>}
           {item.min_quantity > 0 && <p className="mt-1 text-sm font-bold text-ink">Minimum order: {item.min_quantity.toLocaleString("en-GB")}</p>}
           <p className="mt-4 flex-1 overflow-y-auto whitespace-pre-line text-[15.5px] leading-relaxed text-[#4b3d54]">{item.description}</p>
-          <Link to="/request" state={{ item: `I would like a quote for: ${item.name}` }} className={`${btnPurple} mt-6 min-h-[52px]`}>
-            Request a quote
-          </Link>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button type="button" onClick={() => navigate("/request", { state: { products: [...picked.filter((p) => p.id !== item.id), item].map(asRequestItem) } })} className={`${btnPurple} min-h-[52px]`}>
+              Request a quote
+            </button>
+            <button type="button" aria-pressed={added} onClick={() => onToggle(item)} className="inline-flex min-h-[52px] cursor-pointer items-center gap-2 rounded-xl border border-[#cdbfd4] px-5 font-extrabold text-purple hover:bg-lilac">
+              {added ? <><LuCheck /> Added to your request</> : <><LuPlus /> Add to my request</>}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -255,6 +274,26 @@ function Catalog() {
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState("all");
   const [open, setOpen] = useState(null);
+  const navigate = useNavigate();
+  const [picked, setPicked] = useState(readPicked);
+  const toggle = (c) =>
+    setPicked((list) => {
+      const next = list.some((p) => p.id === c.id) ? list.filter((p) => p.id !== c.id) : [...list, c];
+      try {
+        sessionStorage.setItem(PICKED, JSON.stringify(next));
+      } catch {
+        /* a private window: the picks last for this page only */
+      }
+      return next;
+    });
+  const clearPicked = () => {
+    try {
+      sessionStorage.removeItem(PICKED);
+    } catch {
+      /* nothing saved */
+    }
+    setPicked([]);
+  };
 
   const categories = useMemo(() => [...new Set((catalogs || []).map((c) => c.category).filter(Boolean))], [catalogs]);
   const shown = (catalogs || []).filter(
@@ -286,7 +325,7 @@ function Catalog() {
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {shown.map((c) => (
-            <article key={c.id} className="overflow-hidden rounded-[22px] border border-line bg-white transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(66,14,81,.18)]">
+            <article key={c.id} className="overflow-hidden rounded-[22px] border border-line bg-white shadow-[0_0_0_rgba(66,14,81,0)] transition-[translate,transform,box-shadow] duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(66,14,81,.18)] motion-reduce:transition-none">
               <div className="flex h-[230px] items-center justify-center bg-white p-3.5">
                 <img src={secure(c.featured_image)} alt={c.name} loading="lazy" className="max-h-full max-w-full object-contain" />
               </div>
@@ -296,7 +335,13 @@ function Catalog() {
                 {money(c.price, currency) && <p className="mt-2 text-xl font-extrabold text-purple">{money(c.price, currency)}</p>}
                 {c.min_quantity > 0 && <p className={`${money(c.price, currency) ? "mt-0.5" : "mt-2"} text-[13px] font-bold text-plum`}>Minimum order: {c.min_quantity.toLocaleString("en-GB")}</p>}
                 <span className="block h-2.5" />
-                <button type="button" onClick={() => setOpen(c)} className="inline-flex min-h-11 items-center font-extrabold text-purple hover:underline">Read more →</button>
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                  <button type="button" onClick={() => setOpen(c)} className="inline-flex min-h-11 items-center font-extrabold text-purple hover:underline">Read more →</button>
+                  <button type="button" aria-pressed={picked.some((p) => p.id === c.id)} onClick={() => toggle(c)}
+                    className={`inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-4 text-[13.5px] font-extrabold transition ${picked.some((p) => p.id === c.id) ? "bg-purple text-peach" : "border border-[#cdbfd4] bg-white text-purple hover:bg-lilac"}`}>
+                    {picked.some((p) => p.id === c.id) ? <><LuCheck aria-hidden="true" /> Added</> : <><LuPlus aria-hidden="true" /> Add to request</>}
+                  </button>
+                </div>
               </div>
             </article>
           ))}
@@ -308,7 +353,18 @@ function Catalog() {
           {shown.length === 0 && <p className="col-span-full text-muted">No products match your search.</p>}
         </div>
       )}
-      {open && <ProductDialog item={open} currency={currency} onClose={() => setOpen(null)} />}
+      {open && <ProductDialog item={open} currency={currency} picked={picked} onToggle={toggle} onClose={() => setOpen(null)} />}
+      {picked.length > 0 && (
+        <div role="region" aria-label="Your request" className="fixed inset-x-3 bottom-4 z-40 mx-auto flex max-w-[640px] flex-wrap items-center justify-between gap-3 rounded-2xl bg-purple px-5 py-3.5 text-white shadow-[0_18px_44px_rgba(28,6,36,.45)]">
+          <p className="text-[15px] font-bold" aria-live="polite">{picked.length} {picked.length === 1 ? "product" : "products"} in your request</p>
+          <div className="flex items-center gap-2.5">
+            <button type="button" onClick={clearPicked} className="min-h-11 cursor-pointer rounded-xl px-3 text-[14px] font-bold text-[#e8d4ee] hover:text-white">Clear</button>
+            <button type="button" onClick={() => navigate("/request", { state: { products: picked.map(asRequestItem) } })} className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl bg-peach px-5 text-[15px] font-extrabold text-purple hover:brightness-95">
+              Request a quote <LuArrowRight />
+            </button>
+          </div>
+        </div>
+      )}
     </Section>
   );
 }

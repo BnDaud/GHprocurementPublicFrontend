@@ -4,6 +4,7 @@ import { globalContext } from "../App";
 import Header from "../components/header";
 import Spinner from "../components/spinner";
 import { RouteCard, Stepper, UpdatesFeed } from "../components/tracker";
+import AcceptCard from "../components/acceptcard";
 import { api, errorText, getSession, justSignedOut } from "../auth/customer";
 import API from "../endpoint/base";
 import air1 from "../images/air1.jpg";
@@ -143,7 +144,7 @@ function TrackView() {
       <main className="relative mx-auto -mt-24 max-w-[1280px] px-5 pb-20 sm:px-10">
         <Stepper stages={data.stages} step={data.step} total={data.steps} />
         <div className="mt-7 flex flex-wrap items-start gap-7">
-          <div className="min-w-0 flex-[1_1_600px]"><UpdatesFeed updates={data.updates} loadEmail={loadEmail} reference={data.reference} /></div>
+          <div className="min-w-0 flex-[1_1_600px]">{id && data.status === "quoted" && <AcceptCard id={id} onAccepted={(d) => { hasData.current = true; setData(d); }} />}<UpdatesFeed updates={data.updates} loadEmail={loadEmail} reference={data.reference} /></div>
           <aside className="flex min-w-0 flex-[1_1_340px] flex-col gap-5">
             <RouteCard step={data.step} total={data.steps} address={data.delivery_address} estimate={data.estimated_delivery ? longDate(data.estimated_delivery) : ""} />
             <section className="rounded-[28px] border border-line bg-white p-7">

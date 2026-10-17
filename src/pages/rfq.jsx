@@ -13,7 +13,7 @@ import { btnPurple, inputClass, labelClass } from "../lib/ui";
 
 const MAX_MB = 10;
 const MAX_ITEMS = 10;
-const blank = (description = "") => ({ description, quantity: "1", file: null });
+const blank = (description = "") => ({ description, quantity: "1", file: null, thumb: "", min: 0 });
 
 // shrink a photo in the browser first (about 1200 px, JPEG), so a phone picture uploads in kilobytes, not megabytes
 async function shrink(file) {
@@ -42,7 +42,9 @@ function Thumb({ file }) {
 
 export default function Rfq() {
   const { session } = useContext(globalContext);
-  const prefill = useLocation().state?.item || "";
+  const here = useLocation();
+  const prefill = here.state?.item || "";
+  const products = here.state?.products; // chosen from the catalog: [{ name, quantity, min, thumb }]
   const navigate = useNavigate();
   const formRef = useRef(null);
   const [form, setForm] = useState({
@@ -52,7 +54,11 @@ export default function Rfq() {
     phone: "",
     item: prefill.split("\n").slice(1).join("\n").trim(), // a note: anything beyond the first line
   });
-  const [rows, setRows] = useState([blank(prefill.split("\n")[0].slice(0, 200))]);
+  const [rows, setRows] = useState(() =>
+    products?.length
+      ? products.slice(0, MAX_ITEMS).map((p) => ({ ...blank(String(p.name || "").slice(0, 200)), quantity: String(p.quantity || "1"), min: Number(p.min) || 0, thumb: p.thumb || "" }))
+      : [blank(prefill.split("\n")[0].slice(0, 200))]
+  );
   const [agree, setAgree] = useState(false);
   const [errors, setErrors] = useState({});
   const [failure, setFailure] = useState("");
@@ -123,6 +129,11 @@ export default function Rfq() {
       focusFirst();
       return;
     }
+    try {
+      sessionStorage.removeItem("gh_picked_products"); // the catalog picks have been sent
+    } catch {
+      /* nothing saved */
+    }
     navigate("/sent", { state: { reference: res.data.reference, email: res.data.email, newAccount: res.data.new_account, id: res.data.id, name: form.name.trim(), company: form.company.trim(), item: rows.filter((r) => r.description.trim()).map((r) => `${r.quantity} x ${r.description.trim()}`).join("\n") }, replace: true });
   };
 
@@ -175,10 +186,11 @@ export default function Rfq() {
             <fieldset className="flex flex-col gap-3">
               <legend className="mb-1 text-[15px] font-bold">What do you need?</legend>
               {rows.map((r, i) => (
-                <div key={i} className="flex items-center gap-2.5">
+                <div key={i}>
+                <div className="flex items-center gap-2.5">
                   <span className="relative flex-none">
                     <label className="flex size-[52px] cursor-pointer items-center justify-center overflow-hidden rounded-[14px] border-2 border-dashed border-[#cdbfd4] bg-blush text-xl text-purple hover:bg-lilac focus-within:outline focus-within:outline-2 focus-within:outline-purple" title={r.file ? "Change picture" : "Add a picture (optional)"}>
-                      {r.file ? <Thumb file={r.file} /> : <LuImage aria-hidden="true" />}
+                      {r.file ? <Thumb file={r.file} /> : r.thumb ? <img src={r.thumb} alt="" className="size-full object-contain bg-white p-0.5" /> : <LuImage aria-hidden="true" />}
                       <input type="file" accept="image/*" className="sr-only" aria-label={`Item ${i + 1} picture (optional)`} onChange={(e) => pickPicture(i, e)} />
                     </label>
                     {r.file && (
@@ -191,6 +203,10 @@ export default function Rfq() {
                     <button type="button" aria-label={`Remove item ${i + 1}`} onClick={() => setRows((x) => x.filter((_, k) => k !== i))} className="flex size-11 flex-none cursor-pointer items-center justify-center rounded-xl text-lg text-[#a3261a] hover:bg-[#fdeceb]"><LuTrash2 /></button>
                   )}
                 </div>
+                {r.min > 0 && Number(String(r.quantity).replace(/,/g, "")) < r.min && (
+                  <p className="mt-1 pl-[62px] text-[12.5px] font-semibold text-[#7a4b00]">The usual minimum order for this product is {r.min.toLocaleString("en-GB")}. You can still send it, and we will tell you what is possible.</p>
+                )}
+              </div>
               ))}
               {err("items")}
               {err("file")}
