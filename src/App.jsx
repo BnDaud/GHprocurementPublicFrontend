@@ -91,7 +91,7 @@ function RouteSeo() {
 }
 
 function App() {
-  const [data, setData] = useState({ metadata: null, service: null, catalogs: null, FAQ: null, tweets: null });
+  const [data, setData] = useState({ metadata: null, service: null, catalogs: null, FAQ: null, showcase: null, tweets: null });
   const [session, setSession] = useState(getSession);
 
   useEffect(() => onSessionChange(() => setSession(getSession())), []);
@@ -104,7 +104,7 @@ function App() {
         if (!res.ok) throw new Error("server down");
         const d = await res.json();
         if (!alive) return;
-        setData({ metadata: d.metadata?.[0] ?? null, service: d.service, catalogs: d.catalogs, FAQ: d.faq, tweets: d.twitter });
+        setData({ metadata: d.metadata?.[0] ?? null, service: d.service, catalogs: d.catalogs, FAQ: d.faq, showcase: d.showcase, tweets: d.twitter });
       } catch (err) {
         console.log(err);
         if (alive) setData((p) => ({ ...p, failed: true }));

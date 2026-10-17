@@ -7,6 +7,7 @@ import Header from "../components/header";
 import Spinner from "../components/spinner";
 import Wheel from "../components/wheel";
 import Estimator from "../components/estimator";
+import Showcase from "../components/showcase";
 import truck from "../images/truck1.jpg";
 import air1 from "../images/air1.jpg";
 import air2 from "../images/air2.jpg";
@@ -615,6 +616,7 @@ export default function Home() {
       <Catalog />
       <Estimator />
       <Promise />
+      <Showcase />
       <Feed />
       <FaqContact />
     </>
