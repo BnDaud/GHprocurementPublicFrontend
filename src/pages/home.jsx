@@ -10,7 +10,7 @@ import truck from "../images/truck1.jpg";
 import air1 from "../images/air1.jpg";
 import air2 from "../images/air2.jpg";
 import logoPurple from "../images/logo-purple.png";
-import { btnPeach, btnPurple, btnGlass, inputClass, eyebrow, secure, countWord, telHref, money } from "../lib/ui";
+import { btnPeach, btnPurple, btnGlass, inputClass, eyebrow, secure, countWord, telHref, money, fillContact } from "../lib/ui";
 
 const SLIDES = [
   { src: truck, label: "Road freight" },
@@ -467,6 +467,7 @@ function Feed() {
 const FAQ_WHEEL_FROM = 5;
 
 function FaqWheel({ faq }) {
+  const { metadata } = useContext(globalContext);
   const [now, setNow] = useState(0); // the question in the middle, once the wheel has stopped
   const q = faq[now] || faq[0];
   return (
@@ -486,7 +487,7 @@ function FaqWheel({ faq }) {
       />
       <div key={q.id} aria-live="polite" className="mx-auto mt-4 max-w-[760px] rounded-2xl border border-line bg-white px-6 py-5">
         <p className="text-[17px] font-extrabold text-purple">{q.question}</p>
-        <p className="mt-2 text-[15.5px] leading-relaxed text-[#4b3d54]">{q.answer}</p>
+        <p className="mt-2 text-[15.5px] leading-relaxed text-[#4b3d54]">{fillContact(q.answer, metadata)}</p>
       </div>
     </div>
   );
@@ -511,7 +512,7 @@ function FaqContact() {
                     {f.question}
                     <span className="text-2xl font-bold transition group-open:rotate-45" aria-hidden="true">+</span>
                   </summary>
-                  <p className="pb-4 text-[15.5px] leading-relaxed text-[#4b3d54]">{f.answer}</p>
+                  <p className="pb-4 text-[15.5px] leading-relaxed text-[#4b3d54]">{fillContact(f.answer, metadata)}</p>
                 </details>
               ))
             ) : (

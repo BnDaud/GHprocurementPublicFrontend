@@ -11,7 +11,7 @@ import SetPassword from "./pages/setpassword";
 import Account from "./pages/account";
 import Track from "./pages/track";
 import { useSeo, SITE } from "./components/seo";
-import { secure } from "./lib/ui";
+import { secure, fillContact } from "./lib/ui";
 
 export const globalContext = createContext({});
 
@@ -69,7 +69,7 @@ function RouteSeo() {
     jsonLd.push({
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.question, acceptedAnswer: { "@type": "Answer", text: f.answer } })),
+      mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.question, acceptedAnswer: { "@type": "Answer", text: fillContact(f.answer, metadata) } })),
     });
   }
   if (home && catalogs?.length) {

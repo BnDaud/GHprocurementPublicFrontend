@@ -24,6 +24,14 @@ export const longDate = (iso) =>
 export const secure = (url) => (url ? String(url).replace(/^http:\/\//, "https://") : url);
 const WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
 export const countWord = (n) => WORDS[n] ?? String(n);
+// FAQ answers can say {phone}, {email} and {office}: the site fills them in from the CMS Settings,
+// so a changed number or address updates everywhere by itself.
+export const fillContact = (text, metadata) =>
+  String(text ?? "")
+    .replace(/\{phone\}/gi, metadata?.phone || "our phone number")
+    .replace(/\{email\}/gi, metadata?.email || "our email address")
+    .replace(/\{office\}/gi, metadata?.office?.trim() || "our office");
+
 export const telHref = (phone) => `tel:${String(phone || "").replace(/[^\d+]/g, "")}`;
 
 // Prices are shown in the currency chosen in the CMS Settings (US dollars until one is chosen).
