@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import API from "./endpoint/base";
 import { getSession, onSessionChange } from "./auth/customer";
+import WhatsAppButton from "./components/whatsapp";
 import Footer from "./components/footer";
 import Home from "./pages/home";
 import Rfq from "./pages/rfq";
@@ -134,6 +135,7 @@ function App() {
             </Routes>
           </main>
           <Footer />
+          <WhatsAppButton />
         </div>
       </BrowserRouter>
     </globalContext.Provider>

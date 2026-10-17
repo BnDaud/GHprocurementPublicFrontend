@@ -5,10 +5,12 @@ import Header from "../components/header";
 import Spinner from "../components/spinner";
 import { RouteCard, Stepper, UpdatesFeed } from "../components/tracker";
 import AcceptCard from "../components/acceptcard";
+import PayCard from "../components/paycard";
+import MessagesCard from "../components/messages";
 import { api, errorText, getSession, justSignedOut } from "../auth/customer";
 import API from "../endpoint/base";
 import air1 from "../images/air1.jpg";
-import { btnPurple, inputClass, labelClass, longDate } from "../lib/ui";
+import { btnPeach, btnPurple, inputClass, labelClass, longDate, waLink } from "../lib/ui";
 
 function Banner({ children }) {
   return (
@@ -144,7 +146,7 @@ function TrackView() {
       <main className="relative mx-auto -mt-24 max-w-[1280px] px-5 pb-20 sm:px-10">
         <Stepper stages={data.stages} step={data.step} total={data.steps} />
         <div className="mt-7 flex flex-wrap items-start gap-7">
-          <div className="min-w-0 flex-[1_1_600px]">{id && data.status === "quoted" && <AcceptCard id={id} onAccepted={(d) => { hasData.current = true; setData(d); }} />}<UpdatesFeed updates={data.updates} loadEmail={loadEmail} reference={data.reference} /></div>
+          <div className="min-w-0 flex-[1_1_600px]">{id && data.status === "confirmed" && <PayCard />}{id && data.status === "quoted" && <AcceptCard id={id} onAccepted={(d) => { hasData.current = true; setData(d); }} />}<UpdatesFeed updates={data.updates} loadEmail={loadEmail} reference={data.reference} /></div>
           <aside className="flex min-w-0 flex-[1_1_340px] flex-col gap-5">
             <RouteCard step={data.step} total={data.steps} address={data.delivery_address} estimate={data.estimated_delivery ? longDate(data.estimated_delivery) : ""} />
             <section className="rounded-[28px] border border-line bg-white p-7">
@@ -156,11 +158,15 @@ function TrackView() {
                 {data.quotation_reference && <><dt className="text-muted">Quotation</dt><dd className="font-bold">{data.quotation_reference}</dd></>}
               </dl>
             </section>
+            {id && <MessagesCard id={id} />}
             <section className="rounded-[28px] bg-purple p-7 text-[#f1e3f5]">
               <h2 className="mb-2.5 text-xl font-extrabold text-peach">Question about this order?</h2>
               <p className="mb-4 text-[14.5px] leading-relaxed">Quote {data.reference} and we will find it straight away.</p>
               <p className="font-extrabold text-white">{metadata?.email || "info@ghprocurement.com"}</p>
               <p className="mt-1 font-extrabold text-white">{metadata?.phone || "+234 8057962920"}</p>
+              {waLink(metadata) && (
+                <a href={waLink(metadata, `Hello GH Procurement, I have a question about my order ${data.reference}.`)} target="_blank" rel="noreferrer" className={`${btnPeach} mt-5`}>Chat on WhatsApp</a>
+              )}
             </section>
           </aside>
         </div>

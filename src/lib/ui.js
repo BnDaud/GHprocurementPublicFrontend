@@ -24,11 +24,12 @@ export const longDate = (iso) =>
 export const secure = (url) => (url ? String(url).replace(/^http:\/\//, "https://") : url);
 const WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
 export const countWord = (n) => WORDS[n] ?? String(n);
-// FAQ answers can say {phone}, {email} and {office}: the site fills them in from the CMS Settings,
+// FAQ answers can say {phone}, {whatsapp}, {email} and {office}: the site fills them in from the CMS Settings,
 // so a changed number or address updates everywhere by itself.
 export const fillContact = (text, metadata) =>
   String(text ?? "")
     .replace(/\{phone\}/gi, metadata?.phone || "our phone number")
+    .replace(/\{whatsapp\}/gi, metadata?.whatsapp_number || metadata?.phone || "our WhatsApp number")
     .replace(/\{email\}/gi, metadata?.email || "our email address")
     .replace(/\{office\}/gi, metadata?.office?.trim() || "our office");
 
@@ -44,4 +45,12 @@ export const money = (value, currency = "USD") => {
   } catch {
     return `${currency} ${n.toFixed(2)}`;
   }
+};
+
+// A WhatsApp chat link with the message already typed. The number is the "WhatsApp number" in the CMS Settings,
+// or the phone number when that is empty. A local number starting with 0 is read as Nigerian.
+export const waLink = (metadata, text = "") => {
+  let digits = String(metadata?.whatsapp_number || metadata?.phone || "").replace(/\D/g, "");
+  if (digits.startsWith("0")) digits = `234${digits.slice(1)}`;
+  return digits ? `https://wa.me/${digits}${text ? `?text=${encodeURIComponent(text)}` : ""}` : "";
 };

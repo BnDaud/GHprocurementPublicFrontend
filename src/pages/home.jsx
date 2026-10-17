@@ -1,16 +1,17 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaFacebook } from "react-icons/fa";
+import { FaFacebook, FaWhatsapp } from "react-icons/fa";
 import { LuArrowRight, LuCheck, LuPlus, LuSearch, LuFileText, LuTruck, LuMapPin, LuX } from "react-icons/lu";
 import { globalContext } from "../App";
 import Header from "../components/header";
 import Spinner from "../components/spinner";
 import Wheel from "../components/wheel";
+import Estimator from "../components/estimator";
 import truck from "../images/truck1.jpg";
 import air1 from "../images/air1.jpg";
 import air2 from "../images/air2.jpg";
 import logoPurple from "../images/logo-purple.png";
-import { btnPeach, btnPurple, btnGlass, inputClass, eyebrow, secure, countWord, telHref, money, fillContact } from "../lib/ui";
+import { btnPeach, btnPurple, btnGlass, inputClass, eyebrow, secure, countWord, telHref, money, fillContact, waLink } from "../lib/ui";
 
 const SLIDES = [
   { src: truck, label: "Road freight" },
@@ -355,7 +356,7 @@ function Catalog() {
       )}
       {open && <ProductDialog item={open} currency={currency} picked={picked} onToggle={toggle} onClose={() => setOpen(null)} />}
       {picked.length > 0 && (
-        <div role="region" aria-label="Your request" className="fixed inset-x-3 bottom-4 z-40 mx-auto flex max-w-[640px] flex-wrap items-center justify-between gap-3 rounded-2xl bg-purple px-5 py-3.5 text-white shadow-[0_18px_44px_rgba(28,6,36,.45)]">
+        <div role="region" aria-label="Your request" className="fixed inset-x-3 bottom-4 max-sm:bottom-[88px] z-40 mx-auto flex max-w-[640px] flex-wrap items-center justify-between gap-3 rounded-2xl bg-purple px-5 py-3.5 text-white shadow-[0_18px_44px_rgba(28,6,36,.45)]">
           <p className="text-[15px] font-bold" aria-live="polite">{picked.length} {picked.length === 1 ? "product" : "products"} in your request</p>
           <div className="flex items-center gap-2.5">
             <button type="button" onClick={clearPicked} className="min-h-11 cursor-pointer rounded-xl px-3 text-[14px] font-bold text-[#e8d4ee] hover:text-white">Clear</button>
@@ -591,7 +592,14 @@ function FaqContact() {
           ) : (
             <Spinner className="text-3xl" />
           )}
-          <Link to="/request" className={`${btnPeach} mt-8 min-h-[54px] text-base`}>Request a quote</Link>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link to="/request" className={`${btnPeach} min-h-[54px] text-base`}>Request a quote</Link>
+            {waLink(metadata) && (
+              <a href={waLink(metadata, "Hello GH Procurement, I would like a quote for: ")} target="_blank" rel="noreferrer" className="inline-flex min-h-[54px] items-center justify-center gap-2 rounded-[14px] bg-[#25d366] px-7 text-base font-extrabold text-[#08331b] transition hover:brightness-95">
+                <FaWhatsapp className="text-xl" aria-hidden="true" /> Chat on WhatsApp
+              </a>
+            )}
+          </div>
         </aside>
       </div>
     </Section>
@@ -605,6 +613,7 @@ export default function Home() {
       <Services />
       <HowItWorks />
       <Catalog />
+      <Estimator />
       <Promise />
       <Feed />
       <FaqContact />
