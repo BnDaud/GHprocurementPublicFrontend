@@ -5,6 +5,7 @@ import { LuArrowRight, LuSearch, LuFileText, LuTruck, LuMapPin, LuX } from "reac
 import { globalContext } from "../App";
 import Header from "../components/header";
 import Spinner from "../components/spinner";
+import Wheel from "../components/wheel";
 import truck from "../images/truck1.jpg";
 import air1 from "../images/air1.jpg";
 import air2 from "../images/air2.jpg";
@@ -462,6 +463,35 @@ function Feed() {
   );
 }
 
+// a few questions are an ordinary list; from this many on they become a looping wheel, so the section never grows
+const FAQ_WHEEL_FROM = 5;
+
+function FaqWheel({ faq }) {
+  const [now, setNow] = useState(0); // the question in the middle, once the wheel has stopped
+  const q = faq[now] || faq[0];
+  return (
+    <div>
+      <Wheel
+        key={faq.length}
+        items={faq}
+        height={78}
+        noun="question"
+        label="Frequently asked questions"
+        onSettle={setNow}
+        render={(f, middle) => (
+          <div className="flex h-full items-center px-5">
+            <p className={`line-clamp-2 text-[16px] leading-snug ${middle ? "font-extrabold text-purple" : "font-bold text-[#6b5a75]"}`}>{f.question}</p>
+          </div>
+        )}
+      />
+      <div key={q.id} aria-live="polite" className="mx-auto mt-4 max-w-[760px] rounded-2xl border border-line bg-white px-6 py-5">
+        <p className="text-[17px] font-extrabold text-purple">{q.question}</p>
+        <p className="mt-2 text-[15.5px] leading-relaxed text-[#4b3d54]">{q.answer}</p>
+      </div>
+    </div>
+  );
+}
+
 function FaqContact() {
   const { FAQ, metadata } = useContext(globalContext);
   return (
@@ -470,6 +500,9 @@ function FaqContact() {
         <div className="min-w-0 flex-[1_1_520px]">
           <p className={`${eyebrow} mb-2.5`}>FAQ</p>
           <h2 className="mb-7 text-[34px] font-extrabold leading-[1.08] tracking-[-.025em] text-purple sm:text-[44px]">Questions, answered.</h2>
+          {FAQ && FAQ.length >= FAQ_WHEEL_FROM ? (
+            <FaqWheel faq={FAQ} />
+          ) : (
           <div className="flex flex-col gap-2.5">
             {FAQ ? (
               FAQ.map((f) => (
@@ -485,6 +518,7 @@ function FaqContact() {
               <div className="flex justify-center py-10"><Spinner className="text-3xl text-purple" /></div>
             )}
           </div>
+          )}
         </div>
         <aside className="min-w-0 flex-[1_1_360px] rounded-[32px] bg-purple p-8 text-[#f1e3f5] sm:p-11" aria-labelledby="contact-t">
           <h2 id="contact-t" className="mb-6 text-[34px] font-extrabold tracking-[-.02em] text-peach">Contact us</h2>
