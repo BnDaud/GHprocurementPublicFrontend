@@ -1,13 +1,14 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaFacebook, FaWhatsapp } from "react-icons/fa";
-import { LuArrowRight, LuCheck, LuPlus, LuSearch, LuFileText, LuTruck, LuMapPin, LuX } from "react-icons/lu";
+import { LuArrowRight, LuCirclePlay, LuCheck, LuPlus, LuSearch, LuFileText, LuTruck, LuMapPin, LuX } from "react-icons/lu";
 import { globalContext } from "../App";
 import Header from "../components/header";
 import Spinner from "../components/spinner";
 import Wheel from "../components/wheel";
 import Estimator from "../components/estimator";
 import Showcase from "../components/showcase";
+import HowToVideo, { youtubeEmbed } from "../components/howtovideo";
 import truck from "../images/truck1.jpg";
 import air1 from "../images/air1.jpg";
 import air2 from "../images/air2.jpg";
@@ -45,6 +46,8 @@ function Hero() {
   const [slide, setSlide] = useState(0);
   const [ref, setRef] = useState("");
   const [email, setEmail] = useState("");
+  const videoSrc = youtubeEmbed(metadata?.site_video_url);
+  const [video, setVideo] = useState(false);
 
   useEffect(() => {
     const t = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), 5000);
@@ -99,7 +102,13 @@ function Hero() {
             <button type="button" className={`${btnGlass} min-h-14 text-[17px]`} onClick={() => document.getElementById("services")?.scrollIntoView({ behavior: "smooth" })}>
               See our services
             </button>
+            {videoSrc && (
+              <button type="button" className={`${btnGlass} min-h-14 text-[17px]`} onClick={() => setVideo(true)}>
+                <LuCirclePlay className="text-xl" aria-hidden="true" /> Watch how it works
+              </button>
+            )}
           </div>
+          {video && videoSrc && <HowToVideo src={videoSrc} onClose={() => setVideo(false)} />}
         </div>
 
         <aside className="min-w-[300px] flex-[0_1_400px] rounded-3xl border border-white/30 bg-white/12 p-7 backdrop-blur-md" aria-labelledby="hero-track">
