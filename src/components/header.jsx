@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LuMenu, LuX } from "react-icons/lu";
 import { globalContext } from "../App";
 import { clearSession, markSignedOut } from "../auth/customer";
+import HowToVideo, { youtubeEmbed } from "./howtovideo";
 import logoWhite from "../images/logo-white.png";
 
 const SECTIONS = [
@@ -14,7 +15,9 @@ const SECTIONS = [
 
 // overlay: sits on a photo (white text). solid: its own purple bar.
 export default function Header({ overlay = false }) {
-  const { session } = useContext(globalContext);
+  const { session, metadata } = useContext(globalContext);
+  const videoSrc = youtubeEmbed(metadata?.site_video_url);
+  const [video, setVideo] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   // the mobile menu closes by itself when the page changes
@@ -46,6 +49,11 @@ export default function Header({ overlay = false }) {
           {label}
         </button>
       ))}
+      {videoSrc && (
+        <button type="button" onClick={() => { setOpen(false); setVideo(true); }} className={link}>
+          How to use this site
+        </button>
+      )}
       {session ? (
         <>
           <Link to="/account" className={link}>
@@ -90,6 +98,7 @@ export default function Header({ overlay = false }) {
           {nav}
         </nav>
       )}
+      {video && videoSrc && <HowToVideo src={videoSrc} onClose={() => setVideo(false)} />}
     </header>
   );
 }
